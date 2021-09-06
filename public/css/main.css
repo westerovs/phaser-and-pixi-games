@@ -1,3 +1,11 @@
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 :root {
   --text-color: #fff;
   --text-color-active: #ffe800;
@@ -58,4 +66,14 @@
   height: 1px !important;
   width: 1px !important;
   overflow: hidden;
+}
+
+.wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  height: 400px;
+  outline: 1px solid gray;
 }

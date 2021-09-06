@@ -1,6 +1,4 @@
-const getRandomNumber = (min, max) => {
-  return Math.round(Math.random() * (max - min) + min);
-};
+const getRandomNumber = (min, max) => Math.round(Math.random() * (max - min) + min);
 
 export {
   getRandomNumber

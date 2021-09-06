@@ -1,7 +1,7 @@
 {
   "name": "template",
   "version": "15.0.0",
-  "private": true,
+  "private": false,
   "description": "Template Pixi",
   "scripts": {
     "eslint": "eslint src/",
@@ -18,5 +18,8 @@
   },
   "engines": {
     "node": "12"
+  },
+  "dependencies": {
+    "pixi.js": "^6.1.1"
   }
 }
