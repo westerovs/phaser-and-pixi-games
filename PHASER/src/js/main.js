@@ -2,9 +2,12 @@ const game = new Phaser.Game(
     800,
     600, Phaser.AUTO,
     'phaser-example', {
-        preload: preload,
-        create: create, update: update
+        // три главных цикла
+        preload: preload, // занимается загрузкой ассетов
+        create: create,   // создаёт игровые объекты, где будут находиться, размеры и тп
+        update: update    // следит за любыми изменениями в игре (не делать тяжелых вычислений)
     });
+
 
 function preload() {
     game.load.image('bullet', './src/assets/images/bullet.png');
@@ -31,22 +34,22 @@ let firingTimer = 0;
 let stateText = null;
 
 function create() {
-    game.physics.startSystem(Phaser.Physics.ARCADE);
+    game.physics.startSystem(Phaser.Physics.ARCADE); // физ. движок
     
-    //  The scrolling starfield background
+    //  Прокручиваемый фон звездного поля
     starfield = game.add.tileSprite(0, 0, 800, 600, 'starfield');
     
-    //  Our bullet group
+    //  группа игровых объектов
     bullets1 = game.add.group();
-    bullets1.enableBody = true;
+    bullets1.enableBody = true; // предусматривает столкновение
     bullets1.physicsBodyType = Phaser.Physics.ARCADE;
-    bullets1.createMultiple(30, 'bullet');
-    bullets1.setAll('anchor.x', 0.5);
+    bullets1.createMultiple(30, 'bullet'); // пули создаём здесь, а не в цикле update для лучш. производит.
+    bullets1.setAll('anchor.x', 0.5); // setAll - исп для группы, менять св-во / anchor - отцентрировать
     bullets1.setAll('anchor.y', 1);
     bullets1.setAll('outOfBoundsKill', true);
     bullets1.setAll('checkWorldBounds', true);
     
-    //  Our bullet group
+    //  группа игровых объектов
     bullets2 = game.add.group();
     bullets2.enableBody = true;
     bullets2.physicsBodyType = Phaser.Physics.ARCADE;
@@ -56,11 +59,12 @@ function create() {
     bullets2.setAll('outOfBoundsKill', true);
     bullets2.setAll('checkWorldBounds', true);
     
-    //  The hero!
-    player = game.add.sprite(400, 570, 'ship');
+    //  The hero! создание игрока
+    player = game.add.sprite(400, 570, 'ship'); // ship - это ключ
     player.anchor.setTo(0.5, 0.5);
     game.physics.enable(player, Phaser.Physics.ARCADE);
     
+    //  The hero2! создание 2 игрока
     player2 = game.add.sprite(400, 100, 'ship');
     player2.angle = 180;
     player2.anchor.setTo(0.5, 0.5);
@@ -78,6 +82,7 @@ function create() {
     stateText.anchor.setTo(0.5, 0.5);
     stateText.visible = false;
     
+    // в цикле создаём lives
     for (let i = 0; i < 3; i++) {
         let ship = lives.create(game.world.width - 100 + (30 * i), game.world.height - 40, 'ship');
         ship.anchor.setTo(0.5, 0.5);
@@ -90,7 +95,7 @@ function create() {
         ship2.alpha = 0.6;
     }
     
-    //  An explosion pool
+    //  анимация взрывов
     explosions = game.add.group();
     explosions.createMultiple(30, 'kaboom');
     explosions.forEach(function (explosion) {
@@ -101,22 +106,20 @@ function create() {
     
     
     //Player 1 keys
-    cursors = game.input.keyboard.createCursorKeys();
+    cursors = game.input.keyboard.createCursorKeys(); // game.input. отвечает за всю работу с контроллами / createCursorKeys - стрелочки на клаве
     fireButton = game.input.keyboard.addKey(Phaser.Keyboard.NUMPAD_0);
     
     //Player 2 keys
     player2Left = game.input.keyboard.addKey(Phaser.Keyboard.A);
     player2Right = game.input.keyboard.addKey(Phaser.Keyboard.D);
     fireButton2 = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-    
 }
 
-
 function update() {
-    
     //  Scroll the background
-    //starfield.tilePosition.y += 2;
+    starfield.tilePosition.y += 2;
     
+    // если игрок жив
     if (player.alive) {
         //  Reset the player, then check for movement keys
         player.body.velocity.setTo(0, 0);
@@ -127,12 +130,13 @@ function update() {
             player.body.velocity.x = 200;
         }
         
-        //  Firing?
+        //  Firing если нажали и держим
         if (fireButton.isDown) {
             fireBullet();
         }
         
-        //  Run collision
+        //  RUN COLLISION / столкновения
+        // overlap - обработка коллизии bullets → сталкивается с → игроком
         game.physics.arcade.overlap(bullets1, player2, player1Hits2, null, this);
         game.physics.arcade.overlap(bullets2, player, player2Hits1, null, this);
     }
@@ -156,23 +160,23 @@ function update() {
         game.physics.arcade.overlap(bullets1, player2, player1Hits2, null, this);
         game.physics.arcade.overlap(bullets2, player, player2Hits1, null, this);
     }
-    
 }
 
 function player1Hits2(player2, bullet) {
     
-    bullet.kill();
+    bullet.kill();  // убиваем исп. кнопки
     
-    live = lives2.getFirstAlive();
+    live = lives2.getFirstAlive(); // берет жизнь ??
     
+    // если есть живые эл-ты, мы их убиваем
     if (live) {
         live.kill();
     }
     
-    // And create an explosion :)
-    let explosion = explosions.getFirstExists(false);
-    explosion.reset(player2.body.x, player2.body.y);
-    explosion.play('kaboom', 30, false, true);
+    // И создать взрыв :)
+    let explosion = explosions.getFirstExists(false); // берём из созданных первый взрыв
+    explosion.reset(player2.body.x, player2.body.y); // ставим позицию взрыва
+    explosion.play('kaboom', 30, false, true); // запускаем анимацию
     
     // When the player dies
     if (lives2.countLiving() < 1) {
@@ -218,16 +222,16 @@ function player2Hits1(player1, bullet) {
 }
 
 function fireBullet() {
-    //  To avoid them being allowed to fire too fast we set a time limit
+    //  Чтобы они не стреляли слишком быстро, мы установили ограничение по времени
     if (game.time.now > bulletTime) {
-        //  Grab the first bullet we can from the pool
+        //  Возьмите первую пулю, которую мы сможем, из пула
         bullet = bullets1.getFirstExists(false);
         
         if (bullet) {
             //  And fire it
-            bullet.reset(player.x, player.y + 8);
-            bullet.body.velocity.y = -400;
-            bulletTime = game.time.now + 500;
+            bullet.reset(player.x, player.y + 10); // координаты. появления пули
+            bullet.body.velocity.y = -10; // скорость полёта
+            bulletTime = game.time.now + 100; // задержка
         }
     }
     
@@ -250,9 +254,8 @@ function fireBullet2() {
 }
 
 function resetBullet(bullet) {
-    //  Called if the bullet goes out of the screen
+    //  Вызывается, если пуля выходит за пределы экрана
     bullet.kill();
-    
 }
 
 function restart() {
