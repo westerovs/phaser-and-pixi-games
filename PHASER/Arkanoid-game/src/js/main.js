@@ -30,31 +30,28 @@ class Game {
     this.game.load.image('background', './src/assets/images/background2.png');
   }
   
-  create = () => {
+  createBullets = (bullets) => {
+    bullets = this.game.add.group();
+    bullets.enableBody = true; // предусматривает столкновение
+    bullets.physicsBodyType = Phaser.Physics.ARCADE;
+    bullets.createMultiple(30, 'bullet'); // пули создаём здесь, а не в цикле update для лучш. производит.
+    bullets.setAll('anchor.x', 0.5); // setAll - исп для группы, менять св-во / anchor - отцентрировать
+    bullets.setAll('anchor.y', 1);
+    bullets.setAll('outOfBoundsKill', true);
+    bullets.setAll('checkWorldBounds', true);
+  
+    return bullets
+  }
+  
+  createWorld = () => {
     this.game.physics.startSystem(Phaser.Physics.ARCADE); // физ. движок
     //  Прокручиваемый фон звездного поля
     this.starfield = this.game.add.tileSprite(0, 0, 800, 600, 'starfield');
 
     //  группа игровых объектов
-    this.bullets1 = this.game.add.group();
-    this.bullets1.enableBody = true; // предусматривает столкновение
-    this.bullets1.physicsBodyType = Phaser.Physics.ARCADE;
-    this.bullets1.createMultiple(30, 'bullet'); // пули создаём здесь, а не в цикле update для лучш. производит.
-    this.bullets1.setAll('anchor.x', 0.5); // setAll - исп для группы, менять св-во / anchor - отцентрировать
-    this.bullets1.setAll('anchor.y', 1);
-    this.bullets1.setAll('outOfBoundsKill', true);
-    this.bullets1.setAll('checkWorldBounds', true);
-
-    //  группа игровых объектов
-    this.bullets2 = this.game.add.group();
-    this.bullets2.enableBody = true;
-    this.bullets2.physicsBodyType = Phaser.Physics.ARCADE;
-    this.bullets2.createMultiple(30, 'bullet');
-    this.bullets2.setAll('anchor.x', 0.5);
-    this.bullets2.setAll('anchor.y', 1);
-    this.bullets2.setAll('outOfBoundsKill', true);
-    this.bullets2.setAll('checkWorldBounds', true);
-
+    this.bullets1 = this.createBullets(this.bullets1)
+    this.bullets2 = this.createBullets(this.bullets2)
+    
     //  The hero! создание игрока
     this.player = this.game.add.sprite(400, 570, 'ship'); // ship - это ключ
     this.player.anchor.setTo(0.5, 0.5);
@@ -68,10 +65,10 @@ class Game {
 
     //  Lives
     this.lives = this.game.add.group();
-    this.game.add.text(this.game.world.width - 110, 10, 'Lives : ', { font: '34px Arial', fill: '#fff' });
+    this.game.add.text(this.game.world.width - 140, 10, 'Player 2', { font: '34px Arial', fill: '#fff' });
 
     this.lives2 = this.game.add.group();
-    this.game.add.text(this.game.world.width - 110, this.game.world.height - 100, 'Lives : ', {
+    this.game.add.text(this.game.world.width - 140, this.game.world.height - 100, 'Player 1', {
       font: '34px Arial',
       fill: '#fff'
     });
@@ -114,6 +111,8 @@ class Game {
   }
   
   update = () => {
+    // запущена всё время 60fps
+    
     //  Scroll the background
     this.starfield.tilePosition.y += 2;
 
@@ -133,7 +132,7 @@ class Game {
         this.fireBullet();
       }
 
-      //  RUN COLLISION / столкновения
+      // слушает RUN COLLISION / столкновения
       // overlap - обработка коллизии bullets → сталкивается с → игроком
       this.game.physics.arcade.overlap(this.bullets1, this.player2, this.player1Hits2, null, this);
       this.game.physics.arcade.overlap(this.bullets2, this.player, this.player2Hits1, null, this);
@@ -160,8 +159,37 @@ class Game {
     }
   }
 
+  playerHits = (player, bullet, lives) => {
+    bullet.kill();  // останавливаем выстрелы на противнике
+  
+    // const live = this.lives2.getFirstAlive(); // берет жизнь ??
+    const live = lives.getFirstAlive(); // берет жизнь ??
+  
+    // если есть живые эл-ты, мы их убиваем
+    if (live) {
+      live.kill();
+    }
+  
+    // И создать взрыв :)
+    let explosion = this.explosions.getFirstExists(false); // берём из созданных первый взрыв
+    explosion.reset(player.body.x, player.body.y); // вызываем первый шаг взрыва
+    explosion.play('kaboom', 30, false, true); // проигрываем остальные шаги взрыва
+  
+    // When the player dies
+    // if (lives.countLiving() < 1) {
+    //   player.kill();
+    //   this.bullets2.callAll('kill');
+    //
+    //   this.stateText.text = " PLAYER x \n this.GAME OVER \n Click to restart";
+    //   this.stateText.visible = true;
+    //
+    //   //the "click to restart" handler
+    //   this.game.input.onTap.addOnce(this.restart, this);
+    // }
+  }
+  
   player1Hits2 = (player2, bullet) => {
-    bullet.kill();  // убиваем исп. кнопки
+    bullet.kill();  // останавливаем выстрелы на противнике
 
     const live = this.lives2.getFirstAlive(); // берет жизнь ??
 
@@ -172,21 +200,20 @@ class Game {
 
     // И создать взрыв :)
     let explosion = this.explosions.getFirstExists(false); // берём из созданных первый взрыв
-    explosion.reset(player2.body.x, player2.body.y); // ставим позицию взрыва
-    explosion.play('kaboom', 30, false, true); // запускаем анимацию
+    explosion.reset(player2.body.x, player2.body.y); // вызываем первый шаг взрыва
+    explosion.play('kaboom', 30, false, true); // проигрываем остальные шаги взрыва
 
     // When the player dies
     if (this.lives2.countLiving() < 1) {
       player2.kill();
       this.bullets2.callAll('kill');
 
-      this.stateText.text = " PLAYER 2 \n this.GAME OVER \n Click to restart";
+      this.stateText.text = " PLAYER 2 DIE \n GAME OVER \n Click to restart";
       this.stateText.visible = true;
 
       //the "click to restart" handler
       this.game.input.onTap.addOnce(this.restart, this);
     }
-
   }
 
   player2Hits1 = (player1, bullet) => {
@@ -198,7 +225,7 @@ class Game {
       live.kill();
     }
 
-    // And create an explosion :)
+    // And draw an explosion :)
     let explosion = this.explosions.getFirstExists(false);
     explosion.reset(this.player.body.x, this.player.body.y);
     explosion.play('kaboom', 30, false, true);
@@ -208,7 +235,7 @@ class Game {
       this.player.kill();
       this.bullets1.callAll('kill');
 
-      this.stateText.text = " PLAYER 1 \n this.GAME OVER \n Click to restart";
+      this.stateText.text = " PLAYER 1 DIE \n GAME OVER \n Click to restart";
       this.stateText.visible = true;
 
       //the "click to restart" handler
@@ -272,7 +299,7 @@ class Game {
       'phaser-example', {
         // три главных цикла
         preload: this.preload, // занимается загрузкой ассетов
-        create: this.create,   // создаёт игровые объекты, где будут находиться, размеры и тп
+        create: this.createWorld,   // создаёт игровые объекты, где будут находиться, размеры и тп
         update: this.update    // следит за любыми изменениями в игре (не делать тяжелых вычислений)
       });
   }
