@@ -43,26 +43,36 @@ class Game {
     return bullets
   }
   
+  createPlayer = ({ player, x = 400, y = 570, angle, degAngle = 180}) => {
+    player = this.game.add.sprite(x, y, 'ship'); // ship - это ключ
+    player.anchor.setTo(0.5, 0.5);
+    this.game.physics.enable(player, Phaser.Physics.ARCADE);
+    
+    if (angle) {
+      console.log('angle')
+      player.angle = degAngle;
+    }
+    
+    return player
+  }
+  
   createWorld = () => {
     this.game.physics.startSystem(Phaser.Physics.ARCADE); // физ. движок
     //  Прокручиваемый фон звездного поля
     this.starfield = this.game.add.tileSprite(0, 0, 800, 600, 'starfield');
 
-    //  группа игровых объектов
     this.bullets1 = this.createBullets(this.bullets1)
     this.bullets2 = this.createBullets(this.bullets2)
+  
+    this.player = this.createPlayer({
+      player: this.player
+    });
+    this.player2 = this.createPlayer({
+      player: this.player2,
+      y: 50,
+      angle: true,
+    });
     
-    //  The hero! создание игрока
-    this.player = this.game.add.sprite(400, 570, 'ship'); // ship - это ключ
-    this.player.anchor.setTo(0.5, 0.5);
-    this.game.physics.enable(this.player, Phaser.Physics.ARCADE);
-
-    //  The hero2! создание 2 игрока
-    this.player2 = this.game.add.sprite(400, 100, 'ship');
-    this.player2.angle = 180;
-    this.player2.anchor.setTo(0.5, 0.5);
-    this.game.physics.enable(this.player2, Phaser.Physics.ARCADE);
-
     //  Lives
     this.lives = this.game.add.group();
     this.game.add.text(this.game.world.width - 140, 10, 'Player 2', { font: '34px Arial', fill: '#fff' });
