@@ -95,9 +95,9 @@ function gameOver() {
   // игровой объект проверяет, находится ли он в пределах границ мира в каждом кадре.
   ball.checkWorldBounds = true;
   
+  // событие onOutOfBounds  когда игровой объект покидает границы Phaser.World.
   ball.events.onOutOfBounds.add(function () {
-    console.warn('Game over!');
-    location.reload(); // перезагрузка игры
+    ballLeaveScreen()
   }, this);
 }
 
@@ -178,4 +178,27 @@ function createLives() {
   lifeLostText = game.add.text(game.world.width * 0.5, game.world.height * 0.5, 'Life lost, click to continue', textStyle);
   lifeLostText.anchor.set(0.5);
   lifeLostText.visible = false;
+}
+
+// когда мяч вышел за пределы экрана
+function ballLeaveScreen() {
+  // уменьшать количество жизней каждый раз, когда шар выйдет за пределы окна Canvas.
+  lives--;
+  
+  if (lives) {
+    livesText.setText('Lives: ' + lives);
+    lifeLostText.visible = true;
+    
+    ball.reset(game.world.width * 0.5, game.world.height - 25);
+    paddle.reset(game.world.width * 0.5, game.world.height - 5);
+  
+    game.input.onDown
+      .addOnce(function () {
+        lifeLostText.visible = false;
+        ball.body.velocity.set(150, -150);
+      }, this);
+  } else {
+    alert('You lost, game over!');
+    location.reload();
+  }
 }
