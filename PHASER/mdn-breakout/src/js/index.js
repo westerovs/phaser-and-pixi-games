@@ -1,7 +1,7 @@
 const game = new Phaser.Game(
   480,
   320,
-  Phaser.AUTO,
+  Phaser.CANVAS,
   null, {
       preload: preload,
       create : create,
@@ -31,16 +31,18 @@ const textStyle = {
 
 
 function preload() {
-    game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-    game.scale.pageAlignHorizontally = true;
-    game.scale.pageAlignVertically = true;
-    
-    // поменять фон канваса
-    game.stage.backgroundColor = '#444000';
-    //                 имя
-    game.load.image('ball', './src/img/ball.png');
-    game.load.image('paddle', './src/img/paddle.png');
-    game.load.image('brick', './src/img/brick.png');
+  game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+  game.scale.pageAlignHorizontally = true;
+  game.scale.pageAlignVertically = true;
+  
+  // поменять фон канваса
+  game.stage.backgroundColor = '#444000';
+  //                 имя
+  game.load.image('ball', './src/img/ball.png');
+  game.load.image('paddle', './src/img/paddle.png');
+  game.load.image('brick', './src/img/brick.png');
+  //  В spritesheet два доп параметра определяют ширину и высоту каждого отдельного кадра в данном файле
+  game.load.spritesheet('ball', './src/img/wobble.png', 20, 20); // типо атлас мячиков
 }
 
 function create() {
@@ -50,6 +52,8 @@ function create() {
   // [0] чтобы вывести наш мяч на экран, мы используем  метод add.sprite()
   // последний параметр — это имя ↓ картинки
   ball = game.add.sprite(game.world.width * 0.5,  game.world.height - 20, 'ball');
+  ball.animations.add('wobble', [0, 1, 0, 2, 0, 1, 0, 2, 0], 24); // добавить анимацию
+  
   ball.anchor.set(0.5, 1)
   
   paddle = game.add.sprite(game.world.width * 0.5, game.world.height - 10, 'paddle');
@@ -61,8 +65,8 @@ function create() {
   game.physics.enable(paddle, Phaser.Physics.ARCADE);
   
   // [3] установить скорость мяча через velocity (вместо ball.x += 0.3; в update)
-  ball.body.velocity.set(140, -250);
-  ball.body.gravity.y = 0 // гравитация
+  ball.body.velocity.set(0, -50);
+  ball.body.gravity.y = 100 // гравитация
   
   ball.body.collideWorldBounds = true; // вкл столкновения
   ball.body.bounce.set(1); // вкл отскакиваемость
@@ -82,7 +86,7 @@ function create() {
 // код внутри update - это requestAnimations - он всё время запущен
 function update() {
   console.log('update')
-  game.physics.arcade.collide(ball, paddle); // включить обработку столкновений с мячом
+  game.physics.arcade.collide(ball, paddle, ballHitPaddle); // включить обработку столкновений с мячом
   // 3м(опц) параметром, передаём функцию которая  ↓ будет выполняться каждый раз, когда будет найдена коллизия
   game.physics.arcade.collide(ball, bricks, ballHitBrick);
   paddle.x = game.input.x || game.world.width * 0.5; // cм doc
@@ -162,6 +166,12 @@ function ballHitBrick(ball, brick) {
     alert('You won the game, congratulations!');
     location.reload();
   }
+}
+
+// обрабатывает столкновение между мячом и платформой
+function ballHitPaddle() {
+  console.log('бум!')
+  ball.animations.play('wobble');
 }
 
 function createScore() {
