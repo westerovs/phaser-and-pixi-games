@@ -40,14 +40,17 @@ function create() {
   game.physics.enable(ball, Phaser.Physics.ARCADE);
   
   // [3] установить скорость мяча через velocity (вместо ball.x += 0.3; в update)
-  ball.body.velocity.set(10, 150);
+  ball.body.velocity.set(0, 50);
   ball.body.gravity.y = 50 // гравитация
   
   ball.body.collideWorldBounds = true; // вкл столкновения
   ball.body.bounce.set(1); // вкл отскакиваемость
   
   game.physics.enable(paddle, Phaser.Physics.ARCADE);
+  game.physics.arcade.checkCollision.down = false; // откл коллизии снизу
   paddle.body.immovable = true; // что бы платформа не утопала
+  
+  miss()
 }
 
 // код внутри update - это requestAnimations - он всё время запущен
@@ -55,4 +58,16 @@ function update() {
   console.log('update')
   game.physics.arcade.collide(ball, paddle); // включить обработку столкновений с мячом
   paddle.x = game.input.x || game.world.width * 0.5; // cм doc
+}
+
+function miss() {
+  // если мяч падает за пределы платформы
+  // Если установлено значение true,
+  // игровой объект проверяет, находится ли он в пределах границ мира в каждом кадре.
+  ball.checkWorldBounds = true;
+  
+  ball.events.onOutOfBounds.add(function () {
+    alert('Game over!');
+    location.reload();
+  }, this);
 }
