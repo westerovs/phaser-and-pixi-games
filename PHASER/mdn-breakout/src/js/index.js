@@ -22,13 +22,25 @@ function preload() {
 }
 
 function create() {
-  // чтобы вывести наш мяч на экран, мы используем  метод add.sprite()
+  // [1] ( в самом начале !) инициализируем Arcade Physics в нашей игре
+  game.physics.startSystem(Phaser.Physics.ARCADE);
+  
+  // [0] чтобы вывести наш мяч на экран, мы используем  метод add.sprite()
   // последний параметр — это имя ↓ картинки
   ball = game.add.sprite(50, 50, 'ball');
+  
+  // [2] нам необходимо добавить мяч в физическую систему,
+  // т.к объект, отвечающий за физику в Phaser, не включён по умолчанию.
+  game.physics.enable(ball, Phaser.Physics.ARCADE);
+  
+  // [3] установить скорость мяча через velocity (вместо ball.x += 0.3; в update)
+  ball.body.velocity.set(50, 10);
+  ball.body.gravity.x = -25
 }
 
 // код внутри update - это requestAnimations - он всё время запущен
 function update() {
-  ball.x += 0.3;
-  ball.y += 0.1;
+  console.log('update')
+  // ball.x += 0.3;
+  // ball.y += 0.1;
 }
