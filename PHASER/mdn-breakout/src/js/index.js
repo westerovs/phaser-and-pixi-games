@@ -19,6 +19,17 @@ let brickInfo = null; //  brickInfo будет хранить всю инфор�
 let scoreText = null;
 let score = 0;
 
+// жизни
+let lives = 3;
+let livesText = null;
+let lifeLostText = null; //  надпись, которая выведется на экран, если игрок потеряет жизнь
+
+const textStyle = {
+  font: '18px Arial',
+  fill: '#0095DD'
+};
+
+
 function preload() {
     game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     game.scale.pageAlignHorizontally = true;
@@ -50,7 +61,7 @@ function create() {
   game.physics.enable(paddle, Phaser.Physics.ARCADE);
   
   // [3] установить скорость мяча через velocity (вместо ball.x += 0.3; в update)
-  ball.body.velocity.set(340, 250);
+  ball.body.velocity.set(140, -250);
   ball.body.gravity.y = 0 // гравитация
   
   ball.body.collideWorldBounds = true; // вкл столкновения
@@ -63,10 +74,9 @@ function create() {
   gameOver()
   
   // вывод очков
-  scoreText = game.add.text(5, 5, 'Points: 0', {
-    font: '18px Arial',
-    fill: '#0095DD'
-  });
+  scoreText = game.add.text(5, 5, 'Points: 0', textStyle);
+  createScore()
+  createLives()
 }
 
 // код внутри update - это requestAnimations - он всё время запущен
@@ -154,3 +164,18 @@ function ballHitBrick(ball, brick) {
   }
 }
 
+function createScore() {
+  scoreText = game.add.text(5, 5, 'Points: 0', {
+    font: '18px Arial',
+    fill: '#0095DD'
+  });
+}
+
+
+function createLives() {
+  livesText = game.add.text(game.world.width - 10, 5, 'Lives: ' + lives, textStyle);
+  livesText.anchor.set(1, 0);
+  lifeLostText = game.add.text(game.world.width * 0.5, game.world.height * 0.5, 'Life lost, click to continue', textStyle);
+  lifeLostText.anchor.set(0.5);
+  lifeLostText.visible = false;
+}
