@@ -29,9 +29,10 @@ function create() {
   
   // [0] чтобы вывести наш мяч на экран, мы используем  метод add.sprite()
   // последний параметр — это имя ↓ картинки
-  ball = game.add.sprite(50, 50, 'ball');
+  ball = game.add.sprite(game.world.width * 0.5,  game.world.height - 20, 'ball');
+  ball.anchor.set(0.5, 1)
   
-  paddle = game.add.sprite(game.world.width * 0.5, game.world.height - 5, 'paddle');
+  paddle = game.add.sprite(game.world.width * 0.5, game.world.height - 10, 'paddle');
   paddle.anchor.set(0.5, 1); // поставить якорь по середине
   
   // [2] нам необходимо добавить мяч в физическую систему,
@@ -39,8 +40,8 @@ function create() {
   game.physics.enable(ball, Phaser.Physics.ARCADE);
   
   // [3] установить скорость мяча через velocity (вместо ball.x += 0.3; в update)
-  ball.body.velocity.set(90, 140);
-  // ball.body.gravity.x = -125
+  ball.body.velocity.set(10, 150);
+  ball.body.gravity.y = 50 // гравитация
   
   ball.body.collideWorldBounds = true; // вкл столкновения
   ball.body.bounce.set(1); // вкл отскакиваемость
@@ -53,4 +54,5 @@ function create() {
 function update() {
   console.log('update')
   game.physics.arcade.collide(ball, paddle); // включить обработку столкновений с мячом
+  paddle.x = game.input.x || game.world.width * 0.5; // cм doc
 }
