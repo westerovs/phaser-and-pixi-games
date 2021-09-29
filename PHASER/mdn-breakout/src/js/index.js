@@ -9,7 +9,11 @@ const game = new Phaser.Game(
   });
 
 let ball = null;
-let paddle = null; // платформа
+let paddle = null; // ← платформа
+// кирпичи ↓
+let bricks = null; // набор кирпичей
+let newBrick = null; // newBrick - кирпич кот. будет в цикле создаваться
+let brickInfo = null; //  brickInfo будет хранить всю информацию о всех кирпичах
 
 function preload() {
     game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
@@ -21,6 +25,7 @@ function preload() {
     //                 имя
     game.load.image('ball', './src/img/ball.png');
     game.load.image('paddle', './src/img/paddle.png');
+    game.load.image('brick', './src/img/brick.png');
 }
 
 function create() {
@@ -38,19 +43,20 @@ function create() {
   // [2] нам необходимо добавить мяч в физическую систему,
   // т.к объект, отвечающий за физику в Phaser, не включён по умолчанию.
   game.physics.enable(ball, Phaser.Physics.ARCADE);
+  game.physics.enable(paddle, Phaser.Physics.ARCADE);
   
   // [3] установить скорость мяча через velocity (вместо ball.x += 0.3; в update)
-  ball.body.velocity.set(0, 50);
+  ball.body.velocity.set(0, 250);
   ball.body.gravity.y = 50 // гравитация
   
   ball.body.collideWorldBounds = true; // вкл столкновения
   ball.body.bounce.set(1); // вкл отскакиваемость
   
-  game.physics.enable(paddle, Phaser.Physics.ARCADE);
   game.physics.arcade.checkCollision.down = false; // откл коллизии снизу
   paddle.body.immovable = true; // что бы платформа не утопала
   
-  miss()
+  initBricks()
+  gameOver()
 }
 
 // код внутри update - это requestAnimations - он всё время запущен
@@ -60,14 +66,53 @@ function update() {
   paddle.x = game.input.x || game.world.width * 0.5; // cм doc
 }
 
-function miss() {
+function gameOver() {
   // если мяч падает за пределы платформы
   // Если установлено значение true,
   // игровой объект проверяет, находится ли он в пределах границ мира в каждом кадре.
   ball.checkWorldBounds = true;
   
   ball.events.onOutOfBounds.add(function () {
-    alert('Game over!');
-    location.reload();
+    console.warn('Game over!');
+    location.reload(); // перезагрузка игры
   }, this);
+}
+
+function initBricks() {
+  bricks = game.add.group(); // инициализируйте пустой набор для хранения кирпичей
+  
+  brickInfo = {
+    width: 50,
+    height: 20,
+    count: {
+      row: 3,
+      col: 7
+    },
+    offset: {
+      top: 50,
+      left: 60
+    },
+    padding: 10
+  };
+  
+  // Теперь необходимо в каждой итерации создавать кирпич,
+  // чтобы получить необходимое число кирпичей,
+  // нарисовать их всех на экране и добавить в наш набор bricks
+  for (let col = 0; col < brickInfo.count.col; col++) {
+    for (let row = 0; row < brickInfo.count.row; row++) {
+      //координата x каждого кирпича рассчитывается на основе суммы ширины кирпича
+      // brickInfo.width и зазора brickInfo.padding, умноженной на номер столбца сol,
+      // после этого добавляем отступ от левого края brickInfo.offset.left;
+      let brickX = (col * (brickInfo.width + brickInfo.padding)) + brickInfo.offset.left;
+      let brickY = (row * (brickInfo.height + brickInfo.padding)) + brickInfo.offset.top;
+      
+      newBrick = game.add.sprite(brickX, brickY, 'brick');
+      game.physics.enable(newBrick, Phaser.Physics.ARCADE);
+      newBrick.body.immovable = true;
+      newBrick.anchor.set(0.5);
+      
+      bricks.add(newBrick);
+
+    }
+  }
 }
