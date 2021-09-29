@@ -98,8 +98,8 @@ function initBricks() {
     width: 50,
     height: 20,
     count: {
-      row: 3,
-      col: 7
+      row: 1,
+      col: 1
     },
     offset: {
       top: 50,
@@ -130,10 +130,27 @@ function initBricks() {
   }
 }
 
+// разрушение
 function ballHitBrick(ball, brick) {
   brick.kill();
   
   // ↓ обновляем очки при разрушении ↓
   score += 10;
   scoreText.setText('Points: '+score);
+  
+  //
+  let count_alive = 0;
+  
+  bricks.forEach(brick => {
+    if (brick.alive === true) {
+      count_alive++;
+    }
+  })
+
+  // YOU WIN ↓
+  if (count_alive === 0) {
+    alert('You won the game, congratulations!');
+    location.reload();
+  }
 }
+
