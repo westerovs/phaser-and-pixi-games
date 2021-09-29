@@ -34,8 +34,10 @@ function create() {
   game.physics.enable(ball, Phaser.Physics.ARCADE);
   
   // [3] установить скорость мяча через velocity (вместо ball.x += 0.3; в update)
-  ball.body.velocity.set(50, 10);
-  ball.body.gravity.x = -25
+  ball.body.velocity.set(160, 60);
+  ball.body.gravity.x = -125
+  ball.body.collideWorldBounds = true; // вкл столкновения
+  ball.body.bounce.set(1); // вкл отскакиваемость
 }
 
 // код внутри update - это requestAnimations - он всё время запущен
