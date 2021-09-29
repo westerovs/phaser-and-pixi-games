@@ -27,4 +27,8 @@ function create() {
   ball = game.add.sprite(50, 50, 'ball');
 }
 
-function update() {}
+// код внутри update - это requestAnimations - он всё время запущен
+function update() {
+  ball.x += 0.3;
+  ball.y += 0.1;
+}
