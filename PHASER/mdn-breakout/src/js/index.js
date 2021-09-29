@@ -63,7 +63,10 @@ function create() {
 function update() {
   console.log('update')
   game.physics.arcade.collide(ball, paddle); // включить обработку столкновений с мячом
+  // 3м(опц) параметром, передаём функцию которая  ↓ будет выполняться каждый раз, когда будет найдена коллизия
+  game.physics.arcade.collide(ball, bricks, ballHitBrick);
   paddle.x = game.input.x || game.world.width * 0.5; // cм doc
+  
 }
 
 function gameOver() {
@@ -115,4 +118,8 @@ function initBricks() {
 
     }
   }
+}
+
+function ballHitBrick(ball, brick) {
+  brick.kill();
 }
