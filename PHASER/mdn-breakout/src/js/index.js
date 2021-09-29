@@ -15,6 +15,10 @@ let bricks = null; // набор кирпичей
 let newBrick = null; // newBrick - кирпич кот. будет в цикле создаваться
 let brickInfo = null; //  brickInfo будет хранить всю информацию о всех кирпичах
 
+// очки
+let scoreText = null;
+let score = 0;
+
 function preload() {
     game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     game.scale.pageAlignHorizontally = true;
@@ -46,8 +50,8 @@ function create() {
   game.physics.enable(paddle, Phaser.Physics.ARCADE);
   
   // [3] установить скорость мяча через velocity (вместо ball.x += 0.3; в update)
-  ball.body.velocity.set(0, 250);
-  ball.body.gravity.y = 50 // гравитация
+  ball.body.velocity.set(340, 250);
+  ball.body.gravity.y = 0 // гравитация
   
   ball.body.collideWorldBounds = true; // вкл столкновения
   ball.body.bounce.set(1); // вкл отскакиваемость
@@ -57,6 +61,12 @@ function create() {
   
   initBricks()
   gameOver()
+  
+  // вывод очков
+  scoreText = game.add.text(5, 5, 'Points: 0', {
+    font: '18px Arial',
+    fill: '#0095DD'
+  });
 }
 
 // код внутри update - это requestAnimations - он всё время запущен
@@ -122,4 +132,8 @@ function initBricks() {
 
 function ballHitBrick(ball, brick) {
   brick.kill();
+  
+  // ↓ обновляем очки при разрушении ↓
+  score += 10;
+  scoreText.setText('Points: '+score);
 }
