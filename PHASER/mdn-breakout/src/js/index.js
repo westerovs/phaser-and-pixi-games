@@ -8,6 +8,10 @@ const game = new Phaser.Game(
       update : update
   });
 
+// кнопка старт
+let playing = false; // пригодится сделать ракетку неподвижной
+let startButton = null;
+
 let ball = null;
 let paddle = null; // ← платформа
 // кирпичи ↓
@@ -37,7 +41,8 @@ function preload() {
   
   // поменять фон канваса
   game.stage.backgroundColor = '#444000';
-  //                 имя
+  //                    имя ↓
+  game.load.spritesheet('button', '/src/img/button.png', 120, 40);
   game.load.image('ball', './src/img/ball.png');
   game.load.image('paddle', './src/img/paddle.png');
   game.load.image('brick', './src/img/brick.png');
@@ -65,7 +70,6 @@ function create() {
   game.physics.enable(paddle, Phaser.Physics.ARCADE);
   
   // [3] установить скорость мяча через velocity (вместо ball.x += 0.3; в update)
-  ball.body.velocity.set(110, -350);
   ball.body.gravity.y = 0 // гравитация
   
   ball.body.collideWorldBounds = true; // вкл столкновения
@@ -75,7 +79,18 @@ function create() {
   paddle.body.immovable = true; // что бы платформа не утопала
   
   initBricks()
-  gameOver()
+  
+  // added start btn (в самый низ, как z-index в потоке док-та)
+  startButton = game.add.button(
+    game.world.width * 0.5, // pos x
+    game.world.height * 0.5,// pos y
+    'button',  // имя
+    startGame, // Ф-ция обратного вызова, которая будет выполняться при нажатии кнопки.
+    this,      // Ссылка на this определение контекста выполнения
+    1, 0, 2    // кадры анимации
+  );
+  startButton.anchor.set(0.5);
+  gameOver();
   
   // вывод очков
   scoreText = game.add.text(5, 5, 'Points: ', textStyle);
@@ -89,8 +104,12 @@ function update() {
   game.physics.arcade.collide(ball, paddle, ballHitPaddle); // включить обработку столкновений с мячом
   // 3м(опц) параметром, передаём функцию которая  ↓ будет выполняться каждый раз, когда будет найдена коллизия
   game.physics.arcade.collide(ball, bricks, ballHitBrick);
-  paddle.x = game.input.x || game.world.width * 0.5; // cм doc
   
+  // блокировка площадки до тыка по кнопке
+  if (playing) {
+    console.log('test')
+    paddle.x = game.input.x || game.world.width * 0.5;
+  }
 }
 
 function gameOver() {
@@ -186,6 +205,13 @@ function createLives() {
   lifeLostText = game.add.text(game.world.width * 0.5, game.world.height * 0.5, 'Life lost, click to continue', textStyle);
   lifeLostText.anchor.set(0.5);
   lifeLostText.visible = false;
+}
+
+function startGame() {
+  console.log('clack - start game')
+  startButton.destroy();
+  ball.body.velocity.set(150, -150); // после нажатия задаём скорость мячу
+  playing = true;
 }
 
 // когда мяч вышел за пределы экрана
