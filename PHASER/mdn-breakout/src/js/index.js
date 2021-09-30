@@ -65,8 +65,8 @@ function create() {
   game.physics.enable(paddle, Phaser.Physics.ARCADE);
   
   // [3] установить скорость мяча через velocity (вместо ball.x += 0.3; в update)
-  ball.body.velocity.set(0, -50);
-  ball.body.gravity.y = 100 // гравитация
+  ball.body.velocity.set(110, -350);
+  ball.body.gravity.y = 0 // гравитация
   
   ball.body.collideWorldBounds = true; // вкл столкновения
   ball.body.bounce.set(1); // вкл отскакиваемость
@@ -78,7 +78,7 @@ function create() {
   gameOver()
   
   // вывод очков
-  scoreText = game.add.text(5, 5, 'Points: 0', textStyle);
+  scoreText = game.add.text(5, 5, 'Points: ', textStyle);
   createScore()
   createLives()
 }
@@ -112,8 +112,8 @@ function initBricks() {
     width: 50,
     height: 20,
     count: {
-      row: 1,
-      col: 1
+      row: 5,
+      col: 6
     },
     offset: {
       top: 50,
@@ -139,14 +139,13 @@ function initBricks() {
       newBrick.anchor.set(0.5);
       
       bricks.add(newBrick);
-
     }
   }
 }
 
 // разрушение
 function ballHitBrick(ball, brick) {
-  brick.kill();
+  createTweenKill(brick)
   
   // ↓ обновляем очки при разрушении ↓
   score += 10;
@@ -181,7 +180,6 @@ function createScore() {
   });
 }
 
-
 function createLives() {
   livesText = game.add.text(game.world.width - 10, 5, 'Lives: ' + lives, textStyle);
   livesText.anchor.set(1, 0);
@@ -211,4 +209,18 @@ function ballLeaveScreen() {
     alert('You lost, game over!');
     location.reload();
   }
+}
+
+function createTweenKill(brick) {
+  const killTween = game.add.tween(brick.scale);
+  
+  killTween.to({ x: 0.1, y: 0.5 }, 200, Phaser.Easing.Linear.None);
+  
+  // определяет функцию, которая будет выполняться после завершения анимации движения
+  killTween.onComplete.addOnce(function () {
+    brick.kill();
+  }, this);
+  
+  // запуск анимации
+  killTween.start();
 }
