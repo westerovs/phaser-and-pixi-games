@@ -1,260 +1,283 @@
-const game = new Phaser.Game(
-  480,
-  320,
-  Phaser.CANVAS,
-  null, {
-      preload: preload,
-      create : create,
-      update : update
-  });
-
-// кнопка старт
-let playing = false; // пригодится сделать ракетку неподвижной
-let startButton = null;
-
-let ball = null;
-let paddle = null; // ← платформа
-// кирпичи ↓
-let bricks = null; // набор кирпичей
-let newBrick = null; // newBrick - кирпич кот. будет в цикле создаваться
-let brickInfo = null; //  brickInfo будет хранить всю информацию о всех кирпичах
-
-// очки
-let scoreText = null;
-let score = 0;
-
-// жизни
-let lives = 3;
-let livesText = null;
-let lifeLostText = null; //  надпись, которая выведется на экран, если игрок потеряет жизнь
-
-const textStyle = {
-  font: '18px Arial',
-  fill: '#0095DD'
-};
-
-
-function preload() {
-  game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-  game.scale.pageAlignHorizontally = true;
-  game.scale.pageAlignVertically = true;
+class Game {
+  constructor() {
+    this.game = null;
   
-  // поменять фон канваса
-  game.stage.backgroundColor = '#444000';
-  //                    имя ↓
-  game.load.spritesheet('button', '/src/img/button.png', 120, 40);
-  game.load.image('ball', './src/img/ball.png');
-  game.load.image('paddle', './src/img/paddle.png');
-  game.load.image('brick', './src/img/brick.png');
-  //  В spritesheet два доп параметра определяют ширину и высоту каждого отдельного кадра в данном файле
-  game.load.spritesheet('ball', './src/img/wobble.png', 20, 20); // типо атлас мячиков
-}
-
-function create() {
-  // [1] ( в самом начале !) инициализируем Arcade Physics в нашей игре
-  game.physics.startSystem(Phaser.Physics.ARCADE);
+    // кнопка старт
+    this.playing = false; // пригодится сделать ракетку неподвижной
+    this.startButton = null;
   
-  // [0] чтобы вывести наш мяч на экран, мы используем  метод add.sprite()
-  // последний параметр — это имя ↓ картинки
-  ball = game.add.sprite(game.world.width * 0.5,  game.world.height - 20, 'ball');
-  ball.animations.add('wobble', [0, 1, 0, 2, 0, 1, 0, 2, 0], 24); // добавить анимацию
-  
-  ball.anchor.set(0.5, 1)
-  
-  paddle = game.add.sprite(game.world.width * 0.5, game.world.height - 10, 'paddle');
-  paddle.anchor.set(0.5, 1); // поставить якорь по середине
-  
-  // [2] нам необходимо добавить мяч в физическую систему,
-  // т.к объект, отвечающий за физику в Phaser, не включён по умолчанию.
-  game.physics.enable(ball, Phaser.Physics.ARCADE);
-  game.physics.enable(paddle, Phaser.Physics.ARCADE);
-  
-  // [3] установить скорость мяча через velocity (вместо ball.x += 0.3; в update)
-  ball.body.gravity.y = 0 // гравитация
-  
-  ball.body.collideWorldBounds = true; // вкл столкновения
-  ball.body.bounce.set(1); // вкл отскакиваемость
-  
-  game.physics.arcade.checkCollision.down = false; // откл коллизии снизу
-  paddle.body.immovable = true; // что бы платформа не утопала
-  
-  initBricks()
-  
-  // added start btn (в самый низ, как z-index в потоке док-та)
-  startButton = game.add.button(
-    game.world.width * 0.5, // pos x
-    game.world.height * 0.5,// pos y
-    'button',  // имя
-    startGame, // Ф-ция обратного вызова, которая будет выполняться при нажатии кнопки.
-    this,      // Ссылка на this определение контекста выполнения
-    1, 0, 2    // кадры анимации
-  );
-  startButton.anchor.set(0.5);
-  gameOver();
-  
-  // вывод очков
-  scoreText = game.add.text(5, 5, 'Points: ', textStyle);
-  createScore()
-  createLives()
-}
-
-// код внутри update - это requestAnimations - он всё время запущен
-function update() {
-  console.log('update')
-  game.physics.arcade.collide(ball, paddle, ballHitPaddle); // включить обработку столкновений с мячом
-  // 3м(опц) параметром, передаём функцию которая  ↓ будет выполняться каждый раз, когда будет найдена коллизия
-  game.physics.arcade.collide(ball, bricks, ballHitBrick);
-  
-  // блокировка площадки до тыка по кнопке
-  if (playing) {
-    console.log('test')
-    paddle.x = game.input.x || game.world.width * 0.5;
-  }
-}
-
-function gameOver() {
-  // если мяч падает за пределы платформы
-  // Если установлено значение true,
-  // игровой объект проверяет, находится ли он в пределах границ мира в каждом кадре.
-  ball.checkWorldBounds = true;
-  
-  // событие onOutOfBounds  когда игровой объект покидает границы Phaser.World.
-  ball.events.onOutOfBounds.add(function () {
-    ballLeaveScreen()
-  }, this);
-}
-
-function initBricks() {
-  bricks = game.add.group(); // инициализируйте пустой набор для хранения кирпичей
-  
-  brickInfo = {
-    width: 50,
-    height: 20,
-    count: {
-      row: 5,
-      col: 6
-    },
-    offset: {
-      top: 50,
-      left: 60
-    },
-    padding: 10
-  };
-  
-  // Теперь необходимо в каждой итерации создавать кирпич,
-  // чтобы получить необходимое число кирпичей,
-  // нарисовать их всех на экране и добавить в наш набор bricks
-  for (let col = 0; col < brickInfo.count.col; col++) {
-    for (let row = 0; row < brickInfo.count.row; row++) {
-      //координата x каждого кирпича рассчитывается на основе суммы ширины кирпича
-      // brickInfo.width и зазора brickInfo.padding, умноженной на номер столбца сol,
-      // после этого добавляем отступ от левого края brickInfo.offset.left;
-      let brickX = (col * (brickInfo.width + brickInfo.padding)) + brickInfo.offset.left;
-      let brickY = (row * (brickInfo.height + brickInfo.padding)) + brickInfo.offset.top;
-      
-      newBrick = game.add.sprite(brickX, brickY, 'brick');
-      game.physics.enable(newBrick, Phaser.Physics.ARCADE);
-      newBrick.body.immovable = true;
-      newBrick.anchor.set(0.5);
-      
-      bricks.add(newBrick);
-    }
-  }
-}
-
-// разрушение
-function ballHitBrick(ball, brick) {
-  createTweenKill(brick)
-  
-  // ↓ обновляем очки при разрушении ↓
-  score += 10;
-  scoreText.setText('Points: '+score);
-  
-  //
-  let count_alive = 0;
-  
-  bricks.forEach(brick => {
-    if (brick.alive === true) {
-      count_alive++;
-    }
-  })
-
-  // YOU WIN ↓
-  if (count_alive === 0) {
-    alert('You won the game, congratulations!');
-    location.reload();
-  }
-}
-
-// обрабатывает столкновение между мячом и платформой
-function ballHitPaddle(ball, paddle) {
-  console.log(' ------------------ ')
-  console.log(ball, paddle)
-  console.log(' ------------------ ')
-  console.log('бум!')
-  ball.animations.play('wobble');
-  ball.body.velocity.x = -1 * 5 * (paddle.x - ball.x);
-  //  новая скорость тем выше, чем больше расстояние между центром ракетки и местом, где в нее попадает мяч.
-  //  Кроме того, направление (влево или вправо) определяется этим значением - если мяч ударяется
-  //  о левую сторону ракетки, он отскакивает влево,
-  //  а при ударе по правой стороне он отскакивает вправо.
-}
-
-function createScore() {
-  scoreText = game.add.text(5, 5, 'Points: 0', {
-    font: '18px Arial',
-    fill: '#0095DD'
-  });
-}
-
-function createLives() {
-  livesText = game.add.text(game.world.width - 10, 5, 'Lives: ' + lives, textStyle);
-  livesText.anchor.set(1, 0);
-  lifeLostText = game.add.text(game.world.width * 0.5, game.world.height * 0.5, 'Life lost, click to continue', textStyle);
-  lifeLostText.anchor.set(0.5);
-  lifeLostText.visible = false;
-}
-
-function startGame() {
-  console.log('clack - start game')
-  startButton.destroy();
-  ball.body.velocity.set(150, -150); // после нажатия задаём скорость мячу
-  playing = true;
-}
-
-// когда мяч вышел за пределы экрана
-function ballLeaveScreen() {
-  // уменьшать количество жизней каждый раз, когда шар выйдет за пределы окна Canvas.
-  lives--;
-  
-  if (lives) {
-    livesText.setText('Lives: ' + lives);
-    lifeLostText.visible = true;
+    this.ball = null;
+    this.paddle = null; // ← платформа
+    // кирпичи ↓
+    this.bricks = null; // набор кирпичей
+    this.newBrick = null; // this.newBrick - кирпич кот. будет в цикле создаваться
+    this.brickInfo = null; //  this.brickInfo будет хранить всю информацию о всех кирпичах
     
-    ball.reset(game.world.width * 0.5, game.world.height - 25);
-    paddle.reset(game.world.width * 0.5, game.world.height - 5);
+    this.row = 2;
+    this.col = 7;
+    this.velocity = 250;
   
-    game.input.onDown
-      .addOnce(function () {
-        lifeLostText.visible = false;
-        ball.body.velocity.set(150, -150);
-      }, this);
-  } else {
-    alert('You lost, game over!');
+    // очки
+    this.scoreText = null;
+    this.score = 0;
+  
+    // жизни
+    this.lives = 3;
+    this.livesText = null;
+    this.lifeLostText = null; //  надпись, которая выведется на экран, если игрок потеряет жизнь
+    this.textStyle = {
+      font: '18px Arial',
+      fill: '#0095DD'
+    };
+  }
+  
+  preload = () => {
+    this.game.stage.backgroundColor = '#444000';     // поменять фон канваса
+  
+    this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    this.game.scale.pageAlignHorizontally = true;
+    this.game.scale.pageAlignVertically = true;
+
+    this.game.load.spritesheet('button', '/src/img/button.png', 120, 40);
+    this.game.load.image('ball', './src/img/ball.png');
+    this.game.load.image('paddle', './src/img/paddle.png');
+    this.game.load.image('brick', './src/img/brick.png');
+    //  В spritesheet два доп параметра определяют ширину и высоту каждого отдельного кадра в данном файле
+    this.game.load.spritesheet('ball', './src/img/wobble.png', 20, 20); // типо атлас мячиков
+  }
+  
+  create = () => {
+    // [1] ( в самом начале !) инициализируем Arcade Physics в нашей игре
+    this.game.physics.startSystem(Phaser.Physics.ARCADE);
+    this.game.physics.arcade.checkCollision.down = false; // откл коллизии снизу
+  
+    this.createBall();
+    this.createPlatform();
+    this.createBricks()
+    
+    this.createStartBtn()
+    this.createScore()
+    this.createLives()
+    
+    this.ballMiss();
+  }
+  
+  update = () => {
+    // код внутри update - это requestAnimations - он всё время запущен
+    this.game.physics.arcade.collide(this.ball, this.paddle, this.collisionBallOnPaddle); // включить обработку столкновений с мячом
+    // // 3м(опц) параметром, передаём функцию которая  ↓ будет выполняться каждый раз, когда будет найдена коллизия
+    this.game.physics.arcade.collide(this.ball, this.bricks, this.collisionBallOnBricks);
+
+    // блокировка площадки до тыка по кнопке
+    if (this.playing) {
+      // движение платформы
+      this.paddle.x = this.game.input.x || this.game.world.width * 0.5;
+    }
+  }
+  
+  init() {
+    this.game = new Phaser.Game(
+      480,
+      320,
+      Phaser.CANVAS,
+      null, {
+        preload: this.preload,
+        create : this.create,
+        update : this.update
+      })
+  }
+  
+  startGame() {
+    console.log('clack - start game')
+    
+    this.startButton.destroy();
+    this.ball.body.velocity.set(this.velocity, -this.velocity); // после нажатия задаём скорость мячу
+    this.playing = true;
+  }
+  
+  ballMiss() {
+    // если мяч падает за пределы платформы
+    // игровой объект проверяет, находится ли он в пределах границ мира в каждом кадре.
+    this.ball.checkWorldBounds = true;
+    
+    // событие onOutOfBounds  когда игровой объект покидает границы Phaser.World.
+    this.ball.events.onOutOfBounds.add(function () {
+      this.ballLeaveScreen()
+    }, this);
+  }
+  
+  showWinScreen() {
+    let count_alive = -1;
+  
+    this.bricks.forEach(brick => {
+      if (brick.alive === true) {
+        count_alive++
+      }
+    })
+  
+    // YOU WIN ↓
+    console.log(' ------------------ ')
+    console.log(count_alive)
+    console.log(' ------------------ ')
+    if (count_alive === 0) {
+      this.restartGame('You won the game, congratulations!')
+    }
+  }
+  
+  createBall() {
+    // [0] чтобы вывести наш мяч на экран, мы используем  метод add.sprite()
+    //                                                      последний параметр — это имя картинки  ↓
+    this.ball = this.game.add.sprite(this.game.world.width * 0.5,  this.game.world.height - 20, 'ball');
+    this.ball.animations.add('wobble', [0, 1, 0, 2, 0, 1, 0, 2, 0], 24); // добавить анимацию
+    this.ball.anchor.set(0.5, 1)
+  
+    // нам необходимо добавить физическую систему,
+    this.game.physics.enable(this.ball, Phaser.Physics.ARCADE);
+    this.ball.body.gravity.y = 10 // гравитация
+  
+    this.ball.body.collideWorldBounds = true; // вкл столкновения
+    this.ball.body.bounce.set(1); // вкл отскакиваемость
+  }
+  
+  createPlatform() {
+    this.paddle = this.game.add.sprite(this.game.world.width * 0.5, this.game.world.height - 10, 'paddle');
+    this.paddle.anchor.set(0.5, 1);
+  
+    // нам необходимо добавить физическую систему,
+    this.game.physics.enable(this.paddle, Phaser.Physics.ARCADE);
+    this.paddle.body.immovable = true; // что бы платформа не утопала
+  }
+  
+  createTweenKill(brick) {
+    const killTween = this.game.add.tween(brick.scale);
+    
+    killTween.to({ x: 0.1, y: 0.5 }, 200, Phaser.Easing.Linear.None);
+    
+    // определяет функцию, которая будет выполняться после завершения анимации движения
+    killTween.onComplete.addOnce(function () {
+      brick.kill();
+    }, this);
+    
+    // запуск анимации
+    killTween.start();
+  }
+  
+  createBricks() {
+    this.bricks = this.game.add.group(); // инициализируйте пустой набор для хранения кирпичей
+    
+    this.brickInfo = {
+      width: 50,
+      height: 20,
+      count: {
+        row: this.row,
+        col: this.col
+      },
+      offset: {
+        top: 50,
+        left: 60
+      },
+      padding: 10
+    };
+    
+    // Теперь необходимо в каждой итерации создавать кирпич,
+    // чтобы получить необходимое число кирпичей,
+    // нарисовать их всех на экране и добавить в наш набор this.bricks
+    for (let col = 0; col < this.brickInfo.count.col; col++) {
+      for (let row = 0; row < this.brickInfo.count.row; row++) {
+        //координата x каждого кирпича рассчитывается на основе суммы ширины кирпича
+        // this.brickInfo.width и зазора this.brickInfo.padding, умноженной на номер столбца сol,
+        // после этого добавляем отступ от левого края this.brickInfo.offset.left;
+        let brickX = (col * (this.brickInfo.width + this.brickInfo.padding)) + this.brickInfo.offset.left;
+        let brickY = (row * (this.brickInfo.height + this.brickInfo.padding)) + this.brickInfo.offset.top;
+        
+        this.newBrick = this.game.add.sprite(brickX, brickY, 'brick');
+        this.game.physics.enable(this.newBrick, Phaser.Physics.ARCADE);
+        this.newBrick.body.immovable = true;
+        this.newBrick.anchor.set(0.5);
+        
+        this.bricks.add(this.newBrick);
+      }
+    }
+  }
+  
+  createStartBtn() {
+    this.startButton = this.game.add.button(
+      this.game.world.width * 0.5, // pos x
+      this.game.world.height * 0.5,// pos y
+      'button',  // имя
+      this.startGame, // Ф-ция обратного вызова, которая будет выполняться при нажатии кнопки.
+      this,      // Ссылка на this определение контекста выполнения
+      1, 0, 2    // кадры анимации
+    );
+    this.startButton.anchor.set(0.5);
+  }
+  
+  collisionBallOnBricks = (ball, brick) => {
+    this.createTweenKill(brick)
+    
+    // ↓ обновляем очки при разрушении ↓
+    this.score += 10;
+    this.scoreText.setText('Points: '+this.score);
+  
+    this.showWinScreen()
+  }
+  
+  collisionBallOnPaddle(ball, paddle) {
+    ball.animations.play('wobble');
+    ball.body.velocity.x = (-1 * 5) * (paddle.x - ball.x);
+    //  новая скорость тем выше, чем больше расстояние между центром ракетки и местом, где в нее попадает мяч.
+    //  Кроме того, направление (влево или вправо) определяется этим значением - если мяч ударяется
+    //  о левую сторону ракетки, он отскакивает влево,
+    //  а при ударе по правой стороне он отскакивает вправо.
+  }
+  
+  createScore(value = 0) {
+    this.scoreText = this.game.add.text(5, 5, `Points: ${ value }`, this.textStyle);
+  }
+  
+  createLives() {
+    this.livesText = this.game.add.text(this.game.world.width - 10, 5, 'Lives: ' + this.lives, this.textStyle);
+    this.livesText.anchor.set(1, 0);
+  
+    this.lifeLostText = this.game.add
+      .text(
+        this.game.world.width * 0.5,  // x
+        this.game.world.height * 0.7, // y
+        'Life lost, click to continue',
+        this.textStyle
+      );
+    this.lifeLostText.anchor.set(0.5);
+    
+    this.lifeLostText.visible = false;
+  }
+  
+  // когда мяч вышел за пределы экрана
+  ballLeaveScreen() {
+    // уменьшать количество жизней каждый раз, когда шар выйдет за пределы окна Canvas.
+    this.lives--;
+    
+    if (this.lives) {
+      this.livesText.setText('Lives: ' + this.lives);
+      this.lifeLostText.visible = true;
+      
+      this.ball.reset(this.game.world.width * 0.5, this.game.world.height - 25);
+      this.paddle.reset(this.game.world.width * 0.5, this.game.world.height - 5);
+      
+      this.game.input.onDown
+        .addOnce(function () {
+          this.lifeLostText.visible = false;
+          this.ball.body.velocity.set(150, -150);
+        }, this);
+    } else {
+      this.restartGame('You lost, game over!')
+    }
+  }
+  
+  restartGame(text) {
+    alert(text);
     location.reload();
   }
 }
 
-function createTweenKill(brick) {
-  const killTween = game.add.tween(brick.scale);
-  
-  killTween.to({ x: 0.1, y: 0.5 }, 200, Phaser.Easing.Linear.None);
-  
-  // определяет функцию, которая будет выполняться после завершения анимации движения
-  killTween.onComplete.addOnce(function () {
-    brick.kill();
-  }, this);
-  
-  // запуск анимации
-  killTween.start();
-}
+new Game().init()
+
