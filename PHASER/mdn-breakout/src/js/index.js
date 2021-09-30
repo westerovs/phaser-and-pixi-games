@@ -187,9 +187,17 @@ function ballHitBrick(ball, brick) {
 }
 
 // обрабатывает столкновение между мячом и платформой
-function ballHitPaddle() {
+function ballHitPaddle(ball, paddle) {
+  console.log(' ------------------ ')
+  console.log(ball, paddle)
+  console.log(' ------------------ ')
   console.log('бум!')
   ball.animations.play('wobble');
+  ball.body.velocity.x = -1 * 5 * (paddle.x - ball.x);
+  //  новая скорость тем выше, чем больше расстояние между центром ракетки и местом, где в нее попадает мяч.
+  //  Кроме того, направление (влево или вправо) определяется этим значением - если мяч ударяется
+  //  о левую сторону ракетки, он отскакивает влево,
+  //  а при ударе по правой стороне он отскакивает вправо.
 }
 
 function createScore() {
