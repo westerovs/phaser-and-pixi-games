@@ -33,5 +33,6 @@ img {
 }
 
 canvas {
+    margin:  100px auto;
     /*cursor: none;*/
 }
