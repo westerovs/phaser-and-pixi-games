@@ -1,8 +1,10 @@
 class SpritePosition {
   constructor(sprites, scalePanel) {
+    console.log(sprites)
     this.sprites = sprites
     this.checkedIndexSprite = 0
     this.sprite = null
+    this.spritesLength = Object.entries(sprites).length - 1
     this.spriteName = null
 
     this.className = 'sprite-position-panel'
@@ -22,12 +24,18 @@ class SpritePosition {
 
   init = () => {
     this.update()
-
     this.createInfoPanel()
     this.setSpritePosition()
   }
 
   update = () => {
+    if (this.checkedIndexSprite >= this.spritesLength) {
+      this.checkedIndexSprite = this.spritesLength
+    }
+    if (this.checkedIndexSprite <= 0) {
+      this.checkedIndexSprite = 0
+    }
+
     this.sprite = Object.entries(this.sprites)[this.checkedIndexSprite][1]
     this.spriteName = Object.entries(this.sprites)[this.checkedIndexSprite][0]
     this.startPositionX = this.sprite.position.x
@@ -50,10 +58,12 @@ class SpritePosition {
         left: 0;
         min-width: 80px;
         padding: 10px 20px;
+        font-family: Monospace, Arial;
         font-size: ${this.scalePanel ? this.scalePanel : 3}em;
         background: rgba(0, 0, 0, 0.7);
+        border-radius: 15px;
+        box-shadow: 5px 5px 5px black;
         color: white;
-        cursor: none;
         z-index: 999;
     `)
 
@@ -73,16 +83,16 @@ class SpritePosition {
 
   setSpritePosition() {
     document.addEventListener('keydown', (key) => {
-      if (key.code === 'ArrowDown') this.startPositionY += this.step
-      if (key.code === 'ArrowUp') this.startPositionY -= this.step
-      if (key.code === 'ArrowLeft') this.startPositionX -= this.step
-      if (key.code === 'ArrowRight') this.startPositionX += this.step
+      if (key.code === 'KeyS') this.startPositionY += this.step
+      if (key.code === 'KeyW') this.startPositionY -= this.step
+      if (key.code === 'KeyA') this.startPositionX -= this.step
+      if (key.code === 'KeyD') this.startPositionX += this.step
 
       // важен порядок → сперва зажимаем shift, потом кнопку
-      if (key.code === 'ArrowDown' && key.shiftKey === true) this.startPositionY += this.stepAccelerator
-      if (key.code === 'ArrowUp' && key.shiftKey === true) this.startPositionY -= this.stepAccelerator
-      if (key.code === 'ArrowLeft' && key.shiftKey === true) this.startPositionX -= this.stepAccelerator
-      if (key.code === 'ArrowRight' && key.shiftKey === true) this.startPositionX += this.stepAccelerator
+      if (key.code === 'KeyS' && key.shiftKey === true) this.startPositionY += this.stepAccelerator
+      if (key.code === 'KeyW' && key.shiftKey === true) this.startPositionY -= this.stepAccelerator
+      if (key.code === 'KeyA' && key.shiftKey === true) this.startPositionX -= this.stepAccelerator
+      if (key.code === 'KeyD' && key.shiftKey === true) this.startPositionX += this.stepAccelerator
 
       this.elementName.innerHTML = `Sprite: ${this.spriteName}`
       this.elementX.innerHTML = `X: ${Math.trunc(this.startPositionX)}`
