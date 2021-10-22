@@ -1,20 +1,19 @@
 /*
 * Утилита для быстрого позиционирования спрайтов на сцене.
 * Принимает первым аргументом объект {} с любым кол-вом спрайтов
-* Второй необязательный параметр отвечает за масштаб интерфейса.
-*
-* Пример: new SpritePosition(sprites, 3)
+* Второй необязательный параметр - число отвечает за масштаб интерфейса (масштаб в EM).
 *
 *
 * Controls:
 * W/S/A/D - change position +/- 1px
 * SHIFT + W/S/A/D - change position +/- 10px
 * CTRL + arrowLeft/arrowRight - change sprite
+*
+* Пример: new SpritePosition(sprites, 3)
 * */
 
 class SpritePosition {
   constructor(sprites, scalePanel) {
-    console.log(sprites)
     this.sprites = sprites
     this.checkedIndexSprite = 0
     this.sprite = null
