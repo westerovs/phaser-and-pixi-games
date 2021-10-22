@@ -1,3 +1,13 @@
+/*
+* Утилита для быстрого позиционирования спрайтов на сцене.
+* Принимает объект {} с любым кол-вом спрайтов
+*
+* Controls:
+* W/S/A/D - change position +/- 1px
+* SHIFT + W/S/A/D - change position +/- 10px
+* CTRL + arrowLeft/arrowRight - change sprite
+* */
+
 class SpritePosition {
   constructor(sprites, scalePanel) {
     console.log(sprites)
