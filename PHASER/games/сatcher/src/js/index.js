@@ -53,6 +53,8 @@ class Game {
   update = () => {
     console.log('update')
     this.moveCatcher()
+    
+    this.game.physics.arcade.overlap(this.catcher, this.cat, this.catHitHandler)
   }
   
   init() {
@@ -82,6 +84,10 @@ class Game {
     if (this.controls.down.isDown) {
       this.catcher.y += 5
     }
+  }
+  
+  catHitHandler() {
+    console.log(11)
   }
 }
 
