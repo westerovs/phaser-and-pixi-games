@@ -20,9 +20,17 @@ class Game {
   create = () => {
     console.log('create')
     this.game.add.sprite(0, 0, 'bg')
+    
+    // catcher
     this.catcher = this.game.add.sprite(400, 100, 'catcher')
     this.catcher.anchor.setTo(0.5, 0.5)
+    // включить физика для игрока
     this.game.physics.enable(this.catcher, Phaser.Physics.ARCADE);
+  
+    // cat
+    this.cat = this.game.add.sprite( Math.random() * this.game.width,
+      Math.random() * this.game.height, 'cat');
+    this.game.physics.enable(this.cat, Phaser.Physics.ARCADE);
   }
   
   update = () => {
