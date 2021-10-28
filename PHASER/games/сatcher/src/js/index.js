@@ -5,8 +5,8 @@ class Game {
     this.cat = null
     this.catcher = null
     this.controls = null
-    this.txtScore = null
     this.score = 0
+    this.txtScore = ''
     this.styleText = {
       font: '30px Arial',
       fill: '#444FFF'
@@ -28,17 +28,19 @@ class Game {
     // catcher
     this.catcher = this.game.add.sprite(400, 100, 'catcher')
     this.catcher.anchor.setTo(0.5, 0.5)
+    this.catcher.scale.set(1.5)
     // включить физика для игрока
-    this.game.physics.enable(this.catcher, Phaser.Physics.ARCADE);
-    
+    this.game.physics.enable(this.catcher, Phaser.Physics.ARCADE)
+
     // cat
     this.cat = this.game.add.sprite(Math.random() * this.game.width,
-      Math.random() * this.game.height, 'cat');
-    this.game.physics.enable(this.cat, Phaser.Physics.ARCADE);
+      Math.random() * this.game.height, 'cat')
+    this.cat.scale.set(3)
+    this.game.physics.enable(this.cat, Phaser.Physics.ARCADE)
     
     //  score
     this.txtScore = this.game.add.text(40, 10, this.score.toString(),
-      this.styleText);
+      this.styleText)
     
     //  controls
     /*
@@ -86,8 +88,11 @@ class Game {
     }
   }
   
-  catHitHandler() {
-    console.log(11)
+  catHitHandler = (catcherObject, catObject) => {
+    catObject.x = Math.random() * this.game.width
+    catObject.y = Math.random() * this.game.height
+    this.score ++
+    this.txtScore.setText( this.score.toString())
   }
 }
 
