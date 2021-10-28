@@ -4,9 +4,13 @@ class Game {
     
     this.cat = null
     this.catcher = null
-    this.cursors = null
+    this.controls = null
     this.txtScore = null
-    this.score = null
+    this.score = 0
+    this.styleText = {
+      font: '30px Arial',
+      fill: '#444FFF'
+    }
   }
   
   preload = () => {
@@ -26,15 +30,29 @@ class Game {
     this.catcher.anchor.setTo(0.5, 0.5)
     // включить физика для игрока
     this.game.physics.enable(this.catcher, Phaser.Physics.ARCADE);
-  
+    
     // cat
-    this.cat = this.game.add.sprite( Math.random() * this.game.width,
+    this.cat = this.game.add.sprite(Math.random() * this.game.width,
       Math.random() * this.game.height, 'cat');
     this.game.physics.enable(this.cat, Phaser.Physics.ARCADE);
+    
+    //  score
+    this.txtScore = this.game.add.text(40, 10, this.score.toString(),
+      this.styleText);
+    
+    //  controls
+    /*
+      Мы будем ссылаться на объект курсора на шаге обновления,
+      но это настроит прослушиватели для состояний
+      вверх и вниз клавиш вверх, вниз, влево и вправо
+    */
+    this.controls = this.game.input.keyboard.createCursorKeys()
   }
   
+  // В фазере метод игрового цикла называется обновлением
   update = () => {
     console.log('update')
+    this.moveCatcher()
   }
   
   init() {
@@ -47,6 +65,23 @@ class Game {
         create : this.create,
         update : this.update
       })
+  }
+  
+  moveCatcher() {
+    if (this.controls.left.isDown) {
+      this.catcher.x -= 5
+      this.catcher.scale.x = 1
+    }
+    if (this.controls.right.isDown) {
+      this.catcher.x += 5
+      this.catcher.scale.x = -1
+    }
+    if (this.controls.up.isDown) {
+      this.catcher.y -= 5
+    }
+    if (this.controls.down.isDown) {
+      this.catcher.y += 5
+    }
   }
 }
 
