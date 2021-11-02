@@ -67,13 +67,14 @@ class SpritePosition {
     const wrapInfo = document.createElement('div')
     wrapInfo.setAttribute('style', `
         position: absolute;
-        top: 0;
-        left: 0;
+        top: 5px;
+        left: 5px;
         min-width: 80px;
-        padding: 10px 20px;
+        padding: 0 10px;
         font-family: Monospace, Arial;
-        font-size: ${this.scalePanel ? this.scalePanel : 3}em;
-        background: rgba(0, 0, 0, 0.7);
+        font-size: ${this.scalePanel ? this.scalePanel : 2}em;
+        line-height: 5px;
+        background: rgba(0, 0, 0, 0.4);
         border-radius: 15px;
         box-shadow: 5px 5px 5px black;
         color: white;
