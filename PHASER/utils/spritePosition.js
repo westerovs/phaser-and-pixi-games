@@ -1,17 +1,3 @@
-/*
-* Утилита для быстрого позиционирования спрайтов на сцене.
-* Принимает первым аргументом объект {} с любым кол-вом спрайтов
-* Второй необязательный параметр - число отвечает за масштаб интерфейса (масштаб в EM).
-*
-*
-* Controls:
-* W/S/A/D - change position +/- 1px
-* SHIFT + W/S/A/D - change position +/- 10px
-* CTRL + arrowLeft/arrowRight - change sprite
-*
-* Пример: new SpritePosition(sprites, 3)
-* */
-
 class SpritePosition {
   constructor(sprites, scalePanel) {
     this.sprites = sprites
@@ -97,32 +83,48 @@ class SpritePosition {
 
   setSpritePosition() {
     document.addEventListener('keydown', (key) => {
-      if (key.code === 'KeyS') this.startPositionY += this.step
-      if (key.code === 'KeyW') this.startPositionY -= this.step
-      if (key.code === 'KeyA') this.startPositionX -= this.step
-      if (key.code === 'KeyD') this.startPositionX += this.step
+      // сменить sprite ctrl + arrows
+      if (key.code === 'ArrowLeft' && key.ctrlKey === true) {
+        this.checkedIndexSprite--
+        this.checkoutSprite()
+        return
+      }
+      if (key.code === 'ArrowRight' && key.ctrlKey === true) {
+        this.checkedIndexSprite++
+        this.checkoutSprite()
+        return
+      }
+      
+      // ↑→↓← - смена позиции
+      if (key.code === 'ArrowDown') this.startPositionY += this.step
+      if (key.code === 'ArrowUp') this.startPositionY -= this.step
+      if (key.code === 'ArrowLeft') this.startPositionX -= this.step
+      if (key.code === 'ArrowRight') this.startPositionX += this.step
 
       // важен порядок → сперва зажимаем shift, потом кнопку
-      if (key.code === 'KeyS' && key.shiftKey === true) this.startPositionY += this.stepAccelerator
-      if (key.code === 'KeyW' && key.shiftKey === true) this.startPositionY -= this.stepAccelerator
-      if (key.code === 'KeyA' && key.shiftKey === true) this.startPositionX -= this.stepAccelerator
-      if (key.code === 'KeyD' && key.shiftKey === true) this.startPositionX += this.stepAccelerator
+      if (key.code === 'ArrowDown' && key.shiftKey === true) this.startPositionY += this.stepAccelerator
+      if (key.code === 'ArrowUp' && key.shiftKey === true) this.startPositionY -= this.stepAccelerator
+      if (key.code === 'ArrowLeft' && key.shiftKey === true) this.startPositionX -= this.stepAccelerator
+      if (key.code === 'ArrowRight' && key.shiftKey === true) this.startPositionX += this.stepAccelerator
 
       this.elementName.innerHTML = `Sprite: ${this.spriteName}`
       this.elementX.innerHTML = `X: ${Math.trunc(this.startPositionX)}`
       this.elementY.innerHTML = `Y: ${Math.trunc(this.startPositionY)}`
 
       this.sprite.position.set(this.startPositionX, this.startPositionY)
-
-      // сменить sprite
-      if (key.code === 'ArrowLeft' && key.ctrlKey === true) {
+    })
+  
+    // сменить sprite колёсиком
+    document.addEventListener('wheel', (wheel) => {
+      if (wheel.deltaY < 0) {
+        console.log('↑')
+        this.checkedIndexSprite++
+        this.checkoutSprite()
+      } else {
+        console.log('↓')
         this.checkedIndexSprite--
         this.checkoutSprite()
       }
-      if (key.code === 'ArrowRight' && key.ctrlKey === true) {
-        this.checkedIndexSprite++
-        this.checkoutSprite()
-      }
-    })
+    });
   }
 }
