@@ -1,1 +1,1 @@
-# PIXI TEMPLATE
+# PHASER & PIXI games, and effects
