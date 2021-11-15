@@ -8,6 +8,7 @@
 
 .page {
     min-height: 100%;
+    background: black;
 }
 
 .page-body {
@@ -33,5 +34,5 @@ img {
 }
 
 canvas {
-    /*cursor: none;*/
+    outline: 3px solid black;
 }
