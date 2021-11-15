@@ -6,31 +6,36 @@ class Game {
     this.textStyle = {
       font: '18px Arial',
       fill: '#0095DD'
-    };
+    }
   
-    this.skeleton = null;
-    this.land = null;
+    this.skeleton = null
+    this.land = null
+    this.lifes = null
   }
   
   preload = () => {
-    this.game.stage.backgroundColor = '#244000';     // поменять фон канваса
-    this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-    this.game.scale.pageAlignHorizontally = true;
-    this.game.scale.pageAlignVertically = true;
+    this.game.stage.backgroundColor = '#244000';    // поменять фон канваса
+    this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL
+    this.game.scale.pageAlignHorizontally = true
+    this.game.scale.pageAlignVertically = true
     
-    this.game.load.image('land', './src/img/land.png');
-    this.game.load.image('skeleton', './src/img/skeleton.png');
-    this.game.load.image('life', './src/img/life.png');
-    this.game.load.image('light', './src/img/light.png');
+    this.game.load.image('land', './src/img/land.png')
+    this.game.load.image('skeleton', './src/img/skeleton.png')
+    this.game.load.image('life', './src/img/life.png')
+    this.game.load.image('light', './src/img/light.png')
+    this.game.load.image('panel', './src/img/panel.png')
+    this.game.load.image('life', './src/img/life.png')
   }
   
   create = () => {
     // [1] ( в самом начале !) инициализируем Arcade Physics в нашей игре
-    this.game.physics.startSystem(Phaser.Physics.ARCADE);
-    this.game.physics.arcade.checkCollision.down = false; // откл коллизии снизу
+    this.game.physics.startSystem(Phaser.Physics.ARCADE)
+    this.game.physics.arcade.checkCollision.down = false // откл коллизии снизу
   
     this.createLand()
     this.createSkeleton()
+    this.createPanel()
+    this.createLifeBricks()
   }
   
   update = () => {
@@ -40,8 +45,8 @@ class Game {
 
   init() {
     this.game = new Phaser.Game(
-      490,
-      320,
+      1366,
+      1366,
       Phaser.CANVAS,
       null, {
         preload: this.preload,
@@ -51,16 +56,45 @@ class Game {
   }
 
   createSkeleton() {
-    this.skeleton = this.game.add.sprite(this.game.world.width * 0.5, this.game.world.height - 175, 'skeleton');
+    this.skeleton = this.game.add.sprite(this.game.world.width * 0.5, this.game.world.height - 300, 'skeleton');
     this.skeleton.anchor.set(0.5);
   }
   
   createLand() {
-    this.land = this.game.add.sprite(this.game.world.width * 0.5, this.game.world.height - 80, 'land');
-    this.land.scale.set(0.5)
+    this.land = this.game.add.sprite(this.game.world.width * 0.5, this.game.world.height - 160, 'land');
     this.land.anchor.set(0.5);
   }
   
+  createPanel() {
+    const panel = this.game.add.sprite(100, 150, 'panel')
+  }
+  
+  createLifeBricks() {
+    const lifes = this.game.add.group(); // инициализируйте пустой набор для хранения кирпичей
+  
+    const lifeParams = {
+      width  : 60,
+      height : 50,
+      col    : 3,
+      offset : {
+        top : 50,
+        left: 60
+      },
+      padding: 10
+    };
+  
+    for (let col = 0; col < lifeParams.col; col++) {
+      let lifePosX = (col * (lifeParams.width + lifeParams.padding)) + lifeParams.offset.left;
+      let lifePosY = 100;
+
+      console.log('x', lifePosX)
+      console.log('y', lifePosY)
+  
+      const newLife = this.game.add.sprite(lifePosX, lifePosY, 'life');
+      newLife.anchor.set(0.5);
+      lifes.add(newLife);
+    }
+  }
 }
 
 new Game().init()
