@@ -22,14 +22,15 @@ class StatusPanel {
     }
     this.lights = []
     this.life = []
-  
-  
+    
     this.VisibleItems = {
       light: 3,
       life: 0
     }
     this.countLight = 2
-    
+  
+    this.livesText = null
+    this.lightText = null
     this.textStyle = {
       font: '18px Arial',
       fill: '#0095DD'
@@ -63,32 +64,47 @@ class StatusPanel {
   
   create = () => {
     this.createPanel(0, 50, 'life')
-    this.createPanel(100, 150, 'light')
-    this.createBtn(100, 300, 'btnLife', this.onHandlerLifeBtn)
-    this.createBtn(300, 300, 'btnLight', this.onHandlerLightBtn)
-    this.createTextStatus()
+    this.createPanel(0, 150, 'light')
+    this.createBtn(300, 80, 'btnLife', this.onHandlerLifeBtn)
+    this.createBtn(300, 180, 'btnLight', this.onHandlerLightBtn)
+  
     console.log(this.lights)
     console.log(this.life)
+    this.createTextStatus()
   }
   
   update = () => {
     // код внутри update - это requestAnimations - он всё время запущен
     if (this.VisibleItems.life <= 0) {
       this.VisibleItems.life = 0
+      this.livesText.setText('Life: ' + this.VisibleItems.life);
     }
   
     // this.updateVisibleItems(this.lights, this.VisibleItems.light)
-    // this.updateVisibleItems(this.life, this.VisibleItems.life)
+    this.updateVisibleItems(this.life, this.VisibleItems.life)
+  }
+  
+  createTextStatus = () => {
+    this.livesText  = this.game.add.text(35, 25, `Life: ${ this.VisibleItems.life }`,  this.textStyle);
+    this.lightText = this.game.add.text(35, 125, `Light: ${ this.VisibleItems.light }`, this.textStyle);
+  
+    this.livesText.anchor.set(0.5);
+    this.lightText.anchor.set(0.5);
+  }
+  
+  updateTextStatus = () => {
+  
   }
   
   updateVisibleItems = (element, currentVisibleElements) => {
-    element.forEach((item, index) => {
-      if (index < currentVisibleElements) {
-        item.style.opacity = '1'
-      } else {
-        item.style.opacity = '0'
-      }
-    })
+    // console.log(element, currentVisibleElements)
+    // element.forEach((item, index) => {
+    //   if (index < currentVisibleElements) {
+    //     item.style.opacity = '1'
+    //   } else {
+    //     item.style.opacity = '0'
+    //   }
+    // })
   }
   
   createPanel(x, y, sprite) {
@@ -124,13 +140,17 @@ class StatusPanel {
       }
     }
   }
-  
-  onHandlerLifeBtn = () => {
-    console.log('life')
+
+  onHandlerLightBtn = () => {
+    this.VisibleItems.life--
+    this.VisibleItems.light--
+    this.livesText.setText('Life: ' + this.VisibleItems.life);
+    this.lightText.setText('Light: ' + this.VisibleItems.light);
   }
   
-  onHandlerLightBtn = () => {
-    console.log('light')
+  onHandlerLifeBtn = () => {
+    this.VisibleItems.life++
+    this.livesText.setText('Life: ' + this.VisibleItems.life);
   }
   
   createBtn(x, y, sprite, callback) {
@@ -143,10 +163,6 @@ class StatusPanel {
       1, 0, 2    // кадры анимации
     );
     this.startButton.anchor.set(0.5);
-  }
-  
-  createTextStatus(value = 0) {
-    this.scoreText = this.game.add.text(5, 5, `Points: ${ value }`, this.textStyle);
   }
 }
 
