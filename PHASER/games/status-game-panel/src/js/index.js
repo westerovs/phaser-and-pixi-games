@@ -1,8 +1,7 @@
-class Game {
+class StatusPanel {
   constructor() {
     this.game = null
     this.panel = null
-    
     this.lifeParams = {
       col    : 3,
       width  : 60,
@@ -21,6 +20,32 @@ class Game {
         left: 0,
       },
     }
+    this.lights = []
+    this.life = []
+  
+  
+    this.VisibleItems = {
+      light: 3,
+      life: 0
+    }
+    this.countLight = 2
+    
+    this.textStyle = {
+      font: '18px Arial',
+      fill: '#0095DD'
+    };
+  }
+  
+  init() {
+    this.game = new Phaser.Game(
+      400,
+      400,
+      Phaser.CANVAS,
+      null, {
+        preload: this.preload,
+        create : this.create,
+        update : this.update
+      })
   }
   
   preload = () => {
@@ -41,22 +66,29 @@ class Game {
     this.createPanel(100, 150, 'light')
     this.createBtn(100, 300, 'btnLife', this.onHandlerLifeBtn)
     this.createBtn(300, 300, 'btnLight', this.onHandlerLightBtn)
+    this.createTextStatus()
+    console.log(this.lights)
+    console.log(this.life)
   }
   
   update = () => {
     // код внутри update - это requestAnimations - он всё время запущен
+    if (this.VisibleItems.life <= 0) {
+      this.VisibleItems.life = 0
+    }
+  
+    // this.updateVisibleItems(this.lights, this.VisibleItems.light)
+    // this.updateVisibleItems(this.life, this.VisibleItems.life)
   }
   
-  init() {
-    this.game = new Phaser.Game(
-      400,
-      400,
-      Phaser.CANVAS,
-      null, {
-        preload: this.preload,
-        create : this.create,
-        update : this.update
-      })
+  updateVisibleItems = (element, currentVisibleElements) => {
+    element.forEach((item, index) => {
+      if (index < currentVisibleElements) {
+        item.style.opacity = '1'
+      } else {
+        item.style.opacity = '0'
+      }
+    })
   }
   
   createPanel(x, y, sprite) {
@@ -77,9 +109,19 @@ class Game {
       const lifePosX = (i * (this.lifeParams.width + this.lifeParams.padding)) + this.lifeParams.offset.left
       const lifePosY = (this.lifeParams.height / 2) + this.lifeParams.offset.top
     
-      const newLife = this.game.add.sprite(lifePosX, lifePosY, sprite)
-      newLife.anchor.set(0.5)
-      this.panel.add(newLife)
+      const newItem = this.game.add.sprite(lifePosX, lifePosY, sprite)
+      newItem.anchor.set(0.5)
+      newItem.alpha = 0.1
+      this.panel.add(newItem)
+      
+      switch (sprite) {
+        case 'light':
+          this.lights.push(newItem)
+          break
+        case 'life':
+          this.life.push(newItem)
+          break
+      }
     }
   }
   
@@ -102,6 +144,10 @@ class Game {
     );
     this.startButton.anchor.set(0.5);
   }
+  
+  createTextStatus(value = 0) {
+    this.scoreText = this.game.add.text(5, 5, `Points: ${ value }`, this.textStyle);
+  }
 }
 
-new Game().init()
+new StatusPanel().init()
