@@ -80,8 +80,8 @@ class StatusPanel {
       this.livesText.setText('Life: ' + this.VisibleItems.life);
     }
   
-    // this.updateVisibleItems(this.lights, this.VisibleItems.light)
     this.updateVisibleItems(this.life, this.VisibleItems.life)
+    this.updateVisibleItems(this.lights, this.VisibleItems.light)
   }
   
   createTextStatus = () => {
@@ -97,14 +97,13 @@ class StatusPanel {
   }
   
   updateVisibleItems = (element, currentVisibleElements) => {
-    // console.log(element, currentVisibleElements)
-    // element.forEach((item, index) => {
-    //   if (index < currentVisibleElements) {
-    //     item.style.opacity = '1'
-    //   } else {
-    //     item.style.opacity = '0'
-    //   }
-    // })
+    element.forEach((item, index) => {
+      if (index < currentVisibleElements) {
+        item.alpha = 1
+      } else {
+        item.alpha = 0
+      }
+    })
   }
   
   createPanel(x, y, sprite) {
@@ -140,7 +139,19 @@ class StatusPanel {
       }
     }
   }
-
+  
+  createBtn(x, y, sprite, callback) {
+    this.startButton = this.game.add.button(
+      x, // pos x
+      y,// pos y
+      sprite,  // имя
+      callback, // Ф-ция обратного вызова, которая будет выполняться при нажатии кнопки.
+      this,      // Ссылка на this определение контекста выполнения
+      1, 0, 2    // кадры анимации
+    );
+    this.startButton.anchor.set(0.5);
+  }
+  
   onHandlerLightBtn = () => {
     this.VisibleItems.life--
     this.VisibleItems.light--
@@ -153,16 +164,33 @@ class StatusPanel {
     this.livesText.setText('Life: ' + this.VisibleItems.life);
   }
   
-  createBtn(x, y, sprite, callback) {
-    this.startButton = this.game.add.button(
-      x, // pos x
-      y,// pos y
-      sprite,  // имя
-      callback, // Ф-ция обратного вызова, которая будет выполняться при нажатии кнопки.
-      this,      // Ссылка на this определение контекста выполнения
-      1, 0, 2    // кадры анимации
-    );
-    this.startButton.anchor.set(0.5);
+  createWinScreen = () => {
+    let textVictory = document.querySelector('.game__victory')
+    
+    if (this.VisibleItems.light === 0 && this.VisibleItems.life === 2) {
+      textVictory.innerHTML = 'CONGRATULATIONS YOU WIN!'
+      textVictory.style.display = 'block'
+      this.btnGameOver.style.display = 'block'
+      document.body.classList.add('win')
+      this.removeHandlers()
+      return
+    }
+    if (this.VisibleItems.light === 0) {
+      textVictory.innerHTML = 'GAME FAIL!'
+      textVictory.style.display = 'block'
+      this.btnGameOver.style.display = 'block'
+      document.body.classList.add('fail')
+      this.removeHandlers()
+      return
+    }
+    if (this.VisibleItems.life === 3) {
+      textVictory.innerHTML = 'CONGRATULATIONS YOU WIN!'
+      this.btnGameOver.style.display = 'block'
+      textVictory.style.display = 'block'
+      this.removeHandlers()
+      document.body.classList.add('win')
+    }
+    
   }
 }
 
