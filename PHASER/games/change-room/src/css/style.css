@@ -1,0 +1,113 @@
+/*
+картинки-заглушки
+https://via.placeholder.com/150x100
+*/
+
+*,
+::before,
+::after {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+.page {
+    min-height: 100%;
+}
+
+.page-body {
+    min-height: 100%;
+    font-size: 18px;
+    font-family: Geometria, Arial, Helvetica, sans-serif;
+    background-color: #2c7580;
+    color: #ccc;
+    overflow: hidden;
+}
+
+a {
+    text-decoration: none;
+}
+
+li {
+    list-style-type: none;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+/*безопасное скрытие элемента*/
+.visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    margin: -1px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    clip: rect(0 0 0 0) !important;
+    overflow: hidden !important;
+}
+
+.game {
+    position: relative;
+    margin: 50px auto;
+    width: 1366px;
+    height: 1366px;
+    outline: 2px dashed gold;
+    background-image: url("../img/bg_state_1.jpg");
+    background-repeat: no-repeat;
+    background-position: center;
+    user-select: none;
+}
+
+.button-panel {
+    outline: 2px solid red;
+    position: absolute;
+    top: 1000px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 630px;
+    justify-content: space-between;
+}
+
+.row-items {
+    position: absolute;
+    left: 160px;
+    display: flex;
+    gap: 0 10px;
+}
+
+.row-items-bad {
+    left: initial;
+    right: 160px;
+}
+
+.button {
+    width: 150px;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+    background-image: url("../img/panel/box.png");
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.button-wallpaper,
+.button-bad {
+    position: absolute;
+}
+
+.button-wallpaper {
+    left: 0;
+}
+
+.button-bad {
+    right: 0;
+}
