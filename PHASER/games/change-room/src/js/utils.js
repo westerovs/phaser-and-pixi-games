@@ -1,7 +1,7 @@
 export default class ActiveTabs {
   constructor(tabSelector, contentSelector) {
-    this.tabItems = Array.from(document.querySelectorAll('.row-items-bed .button-items'))
-    this.contentItems = Array.from(document.querySelectorAll('.bed'))
+    this.tabItems = Array.from(document.querySelectorAll(tabSelector))
+    this.contentItems = Array.from(document.querySelectorAll(contentSelector))
   }
   
   clearActiveClass = (element, className = 'is-active') => {
@@ -16,17 +16,16 @@ export default class ActiveTabs {
     item.addEventListener('click', () => {
       
       if (item.classList.contains('is-active')) return
-      console.log(item)
       
       this.clearActiveClass(this.tabItems)
-      // this.clearActiveClass(this.contentItems)
+      this.clearActiveClass(this.contentItems)
       
       this.setActiveClass(this.tabItems, index)
-      // this.setActiveClass(this.contentItems, index)
+      this.setActiveClass(this.contentItems, index)
     })
   }
   
-  init() {
+  init = () => {
     this.tabItems.forEach(this.checkoutTabs)
   }
 }

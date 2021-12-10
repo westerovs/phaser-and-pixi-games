@@ -1,7 +1,5 @@
 import ActiveTabs from './utils.js';
 
-new ActiveTabs().init()
-
 class Game {
     constructor() {
         this.game = document.querySelector('.game')
@@ -15,13 +13,13 @@ class Game {
     }
     
     btnWallpaperHandler = () => {
-        console.log('wallpaper')
+        console.log('press wallpaper')
         this.rowItemWallpaper.classList.toggle('visually-hidden')
         // this.btnBad.classList.toggle('visually-hidden')
     }
     
     btnBadHandler = () => {
-        console.log('bad')
+        console.log('press bad')
         this.rowItemBad.classList.toggle('visually-hidden')
         // this.btnWallpaper.classList.toggle('visually-hidden')
     }
@@ -37,3 +35,5 @@ class Game {
 }
 
 new Game().init()
+new ActiveTabs('.row-items-bed .button-items', '.bed').init()
+new ActiveTabs('.row-items-wallpaper .button-items', '.wallpaper').init()

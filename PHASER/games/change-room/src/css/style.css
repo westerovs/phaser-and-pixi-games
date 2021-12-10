@@ -124,6 +124,18 @@ img {
     transform: translate(-70%, -60%);
 }
 
-.active-bed {
+.bed.is-active {
+    display: block;
+}
+
+/* обои */
+.wallpaper {
+    display: none;
+    position: absolute;
+    top: 1%;
+    left: 9%;
+}
+
+.wallpaper.is-active {
     display: block;
 }
