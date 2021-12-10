@@ -1,10 +1,14 @@
+import ActiveTabs from './utils.js';
+
+new ActiveTabs().init()
+
 class Game {
     constructor() {
         this.game = document.querySelector('.game')
         this.btnPanel = document.querySelector('.button-panel')
         
         this.rowItemWallpaper = document.querySelector('.row-items-wallpaper')
-        this.rowItemBad       = document.querySelector('.row-items-bad')
+        this.rowItemBad       = document.querySelector('.row-items-bed')
         
         this.btnWallpaper = document.querySelector('.button-wallpaper')
         this.btnBad = document.querySelector('.button-bad')

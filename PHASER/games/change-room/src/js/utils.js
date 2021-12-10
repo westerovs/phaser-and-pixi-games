@@ -1,7 +1,7 @@
-export default class activeTabs {
+export default class ActiveTabs {
   constructor(tabSelector, contentSelector) {
-    this.tabItems = Array.from(document.querySelectorAll('.tab-item'))
-    this.contentItems = Array.from(document.querySelectorAll('.content-item'))
+    this.tabItems = Array.from(document.querySelectorAll('.row-items-bed .button-items'))
+    this.contentItems = Array.from(document.querySelectorAll('.bed'))
   }
   
   clearActiveClass = (element, className = 'is-active') => {
@@ -19,10 +19,10 @@ export default class activeTabs {
       console.log(item)
       
       this.clearActiveClass(this.tabItems)
-      this.clearActiveClass(this.contentItems)
+      // this.clearActiveClass(this.contentItems)
       
       this.setActiveClass(this.tabItems, index)
-      this.setActiveClass(this.contentItems, index)
+      // this.setActiveClass(this.contentItems, index)
     })
   }
   

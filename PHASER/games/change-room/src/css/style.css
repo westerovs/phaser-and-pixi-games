@@ -63,7 +63,6 @@ img {
 }
 
 .button-panel {
-    outline: 2px solid red;
     position: absolute;
     top: 1000px;
     left: 50%;
@@ -79,7 +78,7 @@ img {
     gap: 0 10px;
 }
 
-.row-items-bad {
+.row-items-bed {
     left: initial;
     right: 160px;
 }
@@ -110,4 +109,21 @@ img {
 
 .button-bad {
     right: 0;
+}
+
+.row-items-bed .button-items.is-active {
+    outline: 3px solid red;
+}
+
+/* кровати */
+.bed {
+    display: none;
+    position: absolute;
+    top: 60%;
+    left: 70%;
+    transform: translate(-70%, -60%);
+}
+
+.active-bed {
+    display: block;
 }
