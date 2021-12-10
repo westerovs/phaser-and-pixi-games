@@ -1,4 +1,6 @@
-import ActiveTabs from './utils.js';
+import {bedIsChecked, wallpaperIsChecked} from './const.js';
+import {render} from './utils.js';
+import ActiveTabs from './ActiveTabs.js';
 
 class Game {
     constructor() {
@@ -13,20 +15,26 @@ class Game {
     }
     
     btnWallpaperHandler = () => {
-        console.log('press wallpaper')
+        if (wallpaperIsChecked.check) {
+            this.btnWallpaper.disabled = true
+        }
+        
         this.rowItemWallpaper.classList.toggle('visually-hidden')
-        // this.btnBad.classList.toggle('visually-hidden')
+        this.btnBad.classList.toggle('visually-hidden')
     }
     
-    btnBadHandler = () => {
-        console.log('press bad')
+    _btnBedHandler = () => {
+        if (bedIsChecked.check) {
+            this.btnBad.disabled = true
+        }
+        
         this.rowItemBad.classList.toggle('visually-hidden')
-        // this.btnWallpaper.classList.toggle('visually-hidden')
+        this.btnWallpaper.classList.toggle('visually-hidden')
     }
     
     addedHandlers = () => {
         this.btnWallpaper.addEventListener('click', this.btnWallpaperHandler)
-        this.btnBad.addEventListener('click', this.btnBadHandler)
+        this.btnBad.addEventListener('click', this._btnBedHandler)
     }
     
     init() {
