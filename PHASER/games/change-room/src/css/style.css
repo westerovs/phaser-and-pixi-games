@@ -113,7 +113,7 @@ img {
 }
 
 .button-items.is-active {
-    outline: 3px solid red;
+    box-shadow: 0 0 20px gold;
 }
 
 /* кровати */
@@ -157,5 +157,6 @@ img {
 
 button[disabled] {
     filter: grayscale(1);
+    color: gray;
     cursor: not-allowed;
 }

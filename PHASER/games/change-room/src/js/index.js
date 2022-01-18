@@ -14,7 +14,7 @@ class Game {
         this.btnBad = document.querySelector('.button-bad')
     }
     
-    btnWallpaperHandler = () => {
+    _btnWallpaperHandler = () => {
         if (wallpaperIsChecked.check) {
             this.btnWallpaper.disabled = true
         }
@@ -32,13 +32,13 @@ class Game {
         this.btnWallpaper.classList.toggle('visually-hidden')
     }
     
-    addedHandlers = () => {
-        this.btnWallpaper.addEventListener('click', this.btnWallpaperHandler)
+    _addedHandlers = () => {
+        this.btnWallpaper.addEventListener('click', this._btnWallpaperHandler)
         this.btnBad.addEventListener('click', this._btnBedHandler)
     }
     
     init() {
-        this.addedHandlers()
+        this._addedHandlers()
     }
 }
 
