@@ -14,28 +14,28 @@ class Game {
     this.game.add.tileSprite(0, 0, 5550, 1444, 'background')
     this.game.world.setBounds(0, 0, 5550, 1444) // 1366 - один кадр
   
-    this.game.physics.startSystem(Phaser.Physics.P2JS)
-    this.player = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'bear')
-    this.game.physics.p2.enable(this.player)
+    this.player = this.game.add.sprite(0, 0, 'bear')
     
     this.cursors = this.game.input.keyboard.createCursorKeys()
     this.game.camera.follow(this.player, 0, 1)
+  
   }
   
   update = () => {
     // код внутри update - это requestAnimations - он всё время запущен
-    this.player.body.setZeroVelocity()
+    // this.player.body.setZeroVelocity()
     
     if (this.cursors.up.isDown) {
-      this.player.body.moveUp(300)
+      console.log(this.player.position.y)
+      this.player.position.y -= 10
     } else if (this.cursors.down.isDown) {
-      this.player.body.moveDown(300)
+      this.player.position.y += 10
     }
-    
+
     if (this.cursors.left.isDown) {
-      this.player.body.velocity.x = -300
+      this.player.position.x -= 10
     } else if (this.cursors.right.isDown) {
-      this.player.body.moveRight(300)
+      this.player.position.x += 10
     }
   }
   
