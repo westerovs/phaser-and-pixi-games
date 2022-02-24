@@ -5,36 +5,34 @@ class Game {
     
     this.crystalParts = [
       {
-        // key: 'crystalLeft',
-        key: 'itemPanel1',
-        x: 250,
-        y: 400,
+        key: 'crystalLeft',
+        x: 204,
+        y: 352,
         anchor: {
-          x: 1,
+          x: 0,
           y: 1
         },
-        // angle: 47,
-        angle: 0,
+        angle: -60,
       },
       {
         key: 'crystalTop',
-        x: 250,
-        y: 80,
+        x: 386,
+        y: 205,
         anchor: {
-          x: 0,
-          y: 0
+          x: 1,
+          y: 0.599
         },
-        angle: 0,
+        angle: 80,
       },
       {
         key: 'crystalRight',
-        x: 530,
-        y: 130,
+        x: 564,
+        y: 198,
         anchor: {
-          x: 0,
-          y: 0
+          x: 1,
+          y: 0.65
         },
-        angle: 0,
+        angle: 120,
       },
     ]
   }
@@ -57,9 +55,9 @@ class Game {
     this.game.load.image('bg', '/src/img/bg.jpg')
     this.game.load.image('crystalBody', '/src/img/crystalBody.png')
     this.game.load.image('crystalBodyWrap', '/src/img/crystalBody-wrap.png')
+    this.game.load.image('dots', '/src/img/dots.png')
     
     this.game.load.image('crystalLeft', '/src/img/crystal_left.png')
-    this.game.load.image('itemPanel1', '/src/img/item_panel1.jpg')
     this.game.load.image('crystalTop', '/src/img/crystal_top.png')
     this.game.load.image('crystalRight', '/src/img/crystal_right.png')
   }
@@ -68,20 +66,21 @@ class Game {
     this.game.add.sprite(0, 0, 'bg')
     this.game.add.sprite(200, 90, 'crystalBodyWrap')
     this.game.add.sprite(200, 200, 'crystalBody')
+    this.game.add.sprite(192, 190, 'dots')
   
     this.createCrystalParts()
   }
   
   render = () => {
-    this.game.debug.spriteBounds(this.blocks[0])
-    this.game.debug.spriteBounds(this.blocks[1])
-    this.game.debug.spriteBounds(this.blocks[2])
+    // this.game.debug.spriteBounds(this.blocks[0])
+    // this.game.debug.spriteBounds(this.blocks[1])
+    // this.game.debug.spriteBounds(this.blocks[2])
   }
   
   createCrystalParts = () => {
     this.crystalParts.forEach(item => {
       const crystal = this.game.add.sprite(item.x, item.y, item.key)
-      crystal.anchor.set(item.anchor.x, item.anchor.x)
+      crystal.anchor.set(item.anchor.x, item.anchor.y)
       crystal.angle = item.angle
       this.blocks.push(crystal)
       
@@ -100,14 +99,13 @@ class Game {
       // crystal.events.onDragStop.add(this.onDragStop, this)
       // crystal.input.enableDrag()
   
-      if (item.key === 'itemPanel1') {
-        crystal.alpha = 0.8
-        crystal.anchor.set(0, 0.5)
-        
-        this.game.add.tween(crystal)
-          .to({
-            angle: -230,
-          }, Phaser.Timer.HALF / 2, Phaser.Easing.Linear.None, true).yoyo(true)
+      if (item.key === 'crystalRight') {
+        crystal.alpha = 0.6
+  
+        // this.game.add.tween(crystal)
+        //   .to({
+        //     angle: 230,
+        //   }, Phaser.Timer.HALF / 2, Phaser.Easing.Linear.None, true).yoyo(true)
       }
 
     })
