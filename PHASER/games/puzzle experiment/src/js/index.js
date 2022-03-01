@@ -1,4 +1,4 @@
-import { crystalPartsParams } from './const.js';
+import { crystalPartsParams, crystalParts } from './const.js';
 
 class Game {
   constructor() {
@@ -6,14 +6,8 @@ class Game {
     this.cursors = null
     this.block = null
     
-    this.crystalPartsParams = Object.values({...crystalPartsParams})
-    
-    this.crystalParts = {
-      crystalBody: null,
-      crystalLeft: null,
-      crystalTop: null,
-      crystalRight: null,
-    }
+    this.crystalPartsParams = crystalPartsParams
+    this.crystalParts = crystalParts
   }
   
   init() {
@@ -59,14 +53,15 @@ class Game {
   }
   
   update = () => {
-    // Боря
+    // Боря input вариант
     if (this.game.input.activePointer.isDown) {
-      for (const part of Object.values(this.crystalParts)) {
-        if (part.rotationReady) {
-          console.log(this.game.input)
-          part.angle += 2
-        }
-      }
+      console.log('click')
+      // for (const part of Object.values(this.crystalParts)) {
+      //   if (part.rotationReady) {
+      //     console.log(this.game.input)
+      //     part.angle += 2
+      //   }
+      // }
     }
   }
   
@@ -99,22 +94,20 @@ class Game {
       crystal.index = index
       crystal.prevPointerPos = {x: 0, y: 0}
       crystal.freezePosition = {x: item.x, y: item.y}
-      
-      //input
-      crystal.inputEnabled = true
-      crystal.input.enableDrag()
   
       //Input вариант
+      crystal.inputEnabled = true
       crystal.events.onInputDown.add(()=>{
-        // crystal.rotationReady = true
+        crystal.rotationReady = true
         console.log(crystal.key)
       })
 
       crystal.events.onInputUp.add(()=>{
-        // crystal.rotationReady = false
+        crystal.rotationReady = false
       })
   
       // Drag вариант
+      // crystal.input.enableDrag()
       // crystal.events.onDragStart.add(this.onDragStart, this)
       // crystal.events.onDragUpdate.add(this.onDragUpdate, this)
       // crystal.events.onDragStop.add(this.onDragStop, this)

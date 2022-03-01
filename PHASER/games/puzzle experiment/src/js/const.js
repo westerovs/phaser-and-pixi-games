@@ -48,6 +48,14 @@ const crystalPartsParams = [
   },
 ]
 
+const crystalParts = {
+  crystalBody: null,
+  crystalLeft: null,
+  crystalTop: null,
+  crystalRight: null,
+}
+
 export {
-  crystalPartsParams
+  crystalPartsParams,
+  crystalParts
 }
