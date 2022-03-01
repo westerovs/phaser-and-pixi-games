@@ -1,52 +1,12 @@
+import { crystalPartsParams } from './const.js';
+
 class Game {
   constructor() {
     this.game  = null
     this.cursors = null
-    this.blocks = []
     this.block = null
     
-    this.crystalPartsParams = [
-      {
-        key: 'crystalBody',
-        x: 380,
-        y: 350,
-        anchor: {
-          x: 0.5,
-          y: 0.5
-        },
-        angle: 0,
-      },
-      {
-        key: 'crystalLeft',
-        x: 244,
-        y: 290,
-        anchor: {
-          x: 0,
-          y: 1
-        },
-        angle: -60,
-      },
-      {
-        key: 'crystalTop',
-        x: 286,
-        y: 175,
-        anchor: {
-          x: 1,
-          y: 0.599
-        },
-        angle: 80,
-      },
-      {
-        key: 'crystalRight',
-        x: 475,
-        y: 160,
-        anchor: {
-          x: 1,
-          y: 0.65
-        },
-        angle: 120,
-      },
-    ]
+    this.crystalPartsParams = Object.values({...crystalPartsParams})
     
     this.crystalParts = {
       crystalBody: null,
@@ -89,15 +49,13 @@ class Game {
   create = () => {
     this.cursors = this.game.input.keyboard.createCursorKeys();
     
-    // test
-    this.block = this.game.add.sprite(100, 100, 'block')
-    
     this.game.add.sprite(0, 0, 'bg')
     this.game.add.sprite(200, 90, 'crystalBodyWrap')
-    this.game.add.sprite(192, 190, 'dots')
+    this.block = this.game.add.sprite(100, 100, 'block') // test block
     
     this.createCrystalParts()
     // this.enablePhysics()
+    this.game.add.sprite(190, 185, 'dots')
   }
   
   update = () => {
@@ -110,28 +68,10 @@ class Game {
         }
       }
     }
-    
-    // this.block.body.setZeroVelocity();
-
-    // if (this.cursors.left.isDown) {
-    //   this.block.body.moveLeft(400);
-    // } else if (this.cursors.right.isDown) {
-    //   this.block.body.moveRight(400);
-    // }
-    //
-    // if (this.cursors.up.isDown) {
-    //   this.block.body.moveUp(400);
-    // } else if (this.cursors.down.isDown) {
-    //   this.block.body.moveDown(400);
-    // }
   }
   
   render = () => {
-    this.game.debug.geom(new Phaser.Point(this.block.x, this.block.y), '#ffff00');
-    
-    // this.game.debug.spriteBounds(this.blocks[0])
-    // this.game.debug.spriteBounds(this.blocks[1])
-    // this.game.debug.spriteBounds(this.blocks[2])
+    // this.game.debug.geom(new Phaser.Point(this.block.x, this.block.y), '#ffff00');
   }
   
   createCrystalParts = () => {
@@ -163,19 +103,21 @@ class Game {
       //input
       crystal.inputEnabled = true
       crystal.input.enableDrag()
-      
-      // crystal.events.onInputDown.add(()=>{
-      //   crystal.rotationReady = true
-      //   console.log(index)
-      // })
-
-      // crystal.events.onInputUp.add(()=>{
-      //   crystal.rotationReady = false
-      // })
   
-      crystal.events.onDragStart.add(this.onDragStart, this)
-      crystal.events.onDragUpdate.add(this.onDragUpdate, this)
-      crystal.events.onDragStop.add(this.onDragStop, this)
+      //Input вариант
+      crystal.events.onInputDown.add(()=>{
+        // crystal.rotationReady = true
+        console.log(crystal.key)
+      })
+
+      crystal.events.onInputUp.add(()=>{
+        // crystal.rotationReady = false
+      })
+  
+      // Drag вариант
+      // crystal.events.onDragStart.add(this.onDragStart, this)
+      // crystal.events.onDragUpdate.add(this.onDragUpdate, this)
+      // crystal.events.onDragStop.add(this.onDragStop, this)
     })
   }
   
@@ -275,3 +217,15 @@ new Game().init()
 
 // crystal.body.setZeroVelocity();
 //  редуктор горячей воды / редуктор давления
+// this.block.body.setZeroVelocity();
+// if (this.cursors.left.isDown) {
+//   this.block.body.moveLeft(400);
+// } else if (this.cursors.right.isDown) {
+//   this.block.body.moveRight(400);
+// }
+//
+// if (this.cursors.up.isDown) {
+//   this.block.body.moveUp(400);
+// } else if (this.cursors.down.isDown) {
+//   this.block.body.moveDown(400);
+// }
