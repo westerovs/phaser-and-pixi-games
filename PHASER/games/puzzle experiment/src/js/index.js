@@ -4,10 +4,18 @@ class Game {
     this.cursors = null
     this.blocks = []
     this.block = null
-    this.mouseBody;
-    this.mouseConstraint;
     
     this.crystalPartsParams = [
+      {
+        key: 'crystalBody',
+        x: 380,
+        y: 350,
+        anchor: {
+          x: 0.5,
+          y: 0.5
+        },
+        angle: 0,
+      },
       {
         key: 'crystalLeft',
         x: 244,
@@ -39,7 +47,6 @@ class Game {
         angle: 120,
       },
     ]
-    this.parts = []
     
     this.crystalParts = {
       crystalBody: null,
@@ -87,11 +94,10 @@ class Game {
     
     this.game.add.sprite(0, 0, 'bg')
     this.game.add.sprite(200, 90, 'crystalBodyWrap')
-    this.crystalParts.crystalBody = this.game.add.sprite(380, 350, 'crystalBody')
     this.game.add.sprite(192, 190, 'dots')
     
     this.createCrystalParts()
-    this.enablePhysics()
+    // this.enablePhysics()
   }
   
   update = () => {
@@ -106,7 +112,7 @@ class Game {
     }
     
     // this.block.body.setZeroVelocity();
-    //
+
     // if (this.cursors.left.isDown) {
     //   this.block.body.moveLeft(400);
     // } else if (this.cursors.right.isDown) {
@@ -132,7 +138,11 @@ class Game {
     this.crystalPartsParams.forEach((item, index) => {
       const crystal = this.game.add.sprite(item.x, item.y, item.key)
 
+      // определить в массив части кристалов
       switch (item.key) {
+        case 'crystalBody':
+          this.crystalParts.crystalBody = crystal
+          break;
         case 'crystalLeft':
           this.crystalParts.crystalLeft = crystal
           break;
@@ -158,7 +168,7 @@ class Game {
       //   crystal.rotationReady = true
       //   console.log(index)
       // })
-      //
+
       // crystal.events.onInputUp.add(()=>{
       //   crystal.rotationReady = false
       // })
@@ -229,50 +239,6 @@ class Game {
       // загружает данные полигона в объекты
       crystal.body.loadPolygon('physicsData', crystal.key)
     })
-  }
-  
-  // CLICK
-  onClick(pointer) {
-    console.log('click')
-    const bodies = this.game.physics.p2.hitTest(pointer.position, [
-      this.crystalParts.crystalBody,
-      this.crystalParts.crystalLeft,
-      this.crystalParts.crystalTop,
-      this.crystalParts.crystalRight,
-    ]);
-  
-    // p2 использует другую систему координат, поэтому преобразуйте положение указателя в систему координат p2
-    const physicsPos = [
-      this.game.physics.p2.pxmi(pointer.position.x),
-      this.game.physics.p2.pxmi(pointer.position.y)
-    ];
-  
-    if (bodies.length) {
-      const clickedBody = bodies[0];
-    
-      const localPointInBody = [0, 0];
-      // эта функция принимает physicspost и привязывает его к локальной системе координат телаZ
-      clickedBody.toLocalFrame(localPointInBody, physicsPos);
-    
-      // use a revoluteContraint to attach this.mouseBody to the clicked body
-      this.mouseConstraint = this.game.physics.p2.createRevoluteConstraint(
-        this.mouseBody,
-        [0, 0],
-        clickedBody,
-        [this.game.physics.p2.mpxi(localPointInBody[0]), this.game.physics.p2.mpxi(localPointInBody[1])]);
-    }
-  }
-  
-  onUp() {
-    console.warn('onUp')
-    // удалить ограничение из тела объекта
-    this.game.physics.p2.removeConstraint(this.mouseConstraint);
-  }
-  
-  onMove = (pointer) => {
-    console.log('onMove', pointer)
-    this.mouseBody.position[0] = this.game.physics.p2.pxmi(pointer.position.x);
-    this.mouseBody.position[1] = this.game.physics.p2.pxmi(pointer.position.y);
   }
   
   // DRAG
