@@ -39,6 +39,7 @@ class Game {
         angle: 120,
       },
     ]
+    this.parts = []
     
     this.crystalParts = {
       crystalBody: null,
@@ -46,7 +47,6 @@ class Game {
       crystalTop: null,
       crystalRight: null,
     }
-
   }
   
   init() {
@@ -95,21 +95,29 @@ class Game {
   }
   
   update = () => {
-    // this.block.rotation += 0.005;
-    this.block.body.setZeroVelocity();
-  
-    if (this.cursors.left.isDown) {
-      this.block.body.moveLeft(400);
-    } else if (this.cursors.right.isDown) {
-      this.block.body.moveRight(400);
+    // Боря
+    if (this.game.input.activePointer.isDown) {
+      for (const part of Object.values(this.crystalParts)) {
+        if (part.rotationReady) {
+          console.log(this.game.input)
+          part.angle += 2
+        }
+      }
     }
-  
-    if (this.cursors.up.isDown) {
-      this.block.body.moveUp(400);
-    } else if (this.cursors.down.isDown) {
-      this.block.body.moveDown(400);
-    }
-  
+    
+    // this.block.body.setZeroVelocity();
+    //
+    // if (this.cursors.left.isDown) {
+    //   this.block.body.moveLeft(400);
+    // } else if (this.cursors.right.isDown) {
+    //   this.block.body.moveRight(400);
+    // }
+    //
+    // if (this.cursors.up.isDown) {
+    //   this.block.body.moveUp(400);
+    // } else if (this.cursors.down.isDown) {
+    //   this.block.body.moveDown(400);
+    // }
   }
   
   render = () => {
@@ -121,10 +129,9 @@ class Game {
   }
   
   createCrystalParts = () => {
-    this.crystalPartsParams.forEach(item => {
+    this.crystalPartsParams.forEach((item, index) => {
       const crystal = this.game.add.sprite(item.x, item.y, item.key)
-      crystal.anchor.set(item.anchor.x, item.anchor.y)
-      crystal.angle = item.angle
+
       switch (item.key) {
         case 'crystalLeft':
           this.crystalParts.crystalLeft = crystal
@@ -136,20 +143,34 @@ class Game {
           this.crystalParts.crystalRight = crystal
           break;
       }
+  
+      crystal.anchor.set(item.anchor.x, item.anchor.y)
+      crystal.angle = item.angle
+      crystal.index = index
+      crystal.prevPointerPos = {x: 0, y: 0}
+      crystal.freezePosition = {x: item.x, y: item.y}
       
-      // this.game.input.mouse.capture = true;
-
       //input
-      crystal.inputEnabled = true;
+      crystal.inputEnabled = true
+      crystal.input.enableDrag()
       
-      // this.game.add.tween(crystal)
-      //   .to({
-      //     angle: 230,
-      //   }, Phaser.Timer.HALF / 2, Phaser.Easing.Linear.None, true).yoyo(true)
+      // crystal.events.onInputDown.add(()=>{
+      //   crystal.rotationReady = true
+      //   console.log(index)
+      // })
+      //
+      // crystal.events.onInputUp.add(()=>{
+      //   crystal.rotationReady = false
+      // })
+  
+      crystal.events.onDragStart.add(this.onDragStart, this)
+      crystal.events.onDragUpdate.add(this.onDragUpdate, this)
+      crystal.events.onDragStop.add(this.onDragStop, this)
     })
   }
   
   enablePhysics = () => {
+    return
     //  Включить p2 physics
     this.game.physics.startSystem(Phaser.Physics.P2JS);
     
@@ -259,8 +280,24 @@ class Game {
     console.log('onDragStart')
   }
   
-  onDragUpdate = () => {
+  onDragUpdate = (sprite, pointer) => {
     console.log('onDragUpdate')
+    sprite.position = {
+      x: sprite.freezePosition.x,
+      y: sprite.freezePosition.y
+    }
+  
+    if (pointer.y < sprite.prevPointerPos.y || pointer.x > sprite.prevPointerPos.x) {
+      sprite.angle -= 2
+    }
+    if (pointer.y > sprite.prevPointerPos.y || pointer.x < sprite.prevPointerPos.x) {
+      sprite.angle += 2
+    }
+    
+    sprite.prevPointerPos = {
+      x: pointer.x,
+      y: pointer.y
+    }
   }
   
   onDragStop = () => {
