@@ -1,1 +1,1 @@
-# PHASER & PIXI games, and effects
+# my PHASER games, and utils
