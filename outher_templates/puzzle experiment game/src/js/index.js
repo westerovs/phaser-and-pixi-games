@@ -46,31 +46,34 @@ class Game {
     this.createCrystalParts()
     this.game.add.sprite(190, 185, 'dots')
   
-    this.target = this.createTarget(200, 200)
+
+    this.target = this.createTarget()
   }
 
   update = () => {
-    // Боря input вариант
-    // if (this.game.input.activePointer.isDown) {
-    //   console.log('click')
-    //   for (const part of Object.values(this.crystalParts)) {
-    //     if (part.rotationReady) {
-    //       console.log(this.game.input)
-    //       part.angle += 2
-    //     }
-    //   }
-    // }
+    this.crystalParts.crystalRight.rotation = this.game.physics.arcade.angleBetween(
+      this.crystalParts.crystalRight,
+      this.target
+    )
   }
 
   render = () => {
+    this.game.debug.spriteBounds(this.crystalParts.crystalRight)
   }
   
-  createTarget = (x, y, anchorX = 0.5, anchorY = 0.5) => {
-    const target = this.game.add.sprite(x, y, 'target')
+  createTarget = () => {
+    const posX = this.crystalParts.crystalRight.position.x - this.crystalParts.crystalRight.width / 2
+    const posY = this.crystalParts.crystalRight.position.y - this.crystalParts.crystalRight.height / 2
+  
+    const target = this.game.add.sprite(posX, posY, 'target')
+  
+
+    const anchorX = this.crystalParts.crystalRight.anchor.x
+    const anchorY = this.crystalParts.crystalRight.anchor.y
+    
     target.anchor.setTo(anchorX, anchorY)
     target.inputEnabled = true
     target.input.enableDrag(true)
-    // target.scale.set(3)
     
     return target
   }
@@ -97,12 +100,8 @@ class Game {
 
       crystal.anchor.set(item.anchor.x, item.anchor.y)
       crystal.angle = item.angle
-      crystal.index = index
-      crystal.freezePosition = {x: item.x, y: item.y}
-      crystal.prevPointerPos = {x: 0, y: 0}
       crystal.inputEnabled = true
 
-      //Input вариант
       // crystal.events.onInputDown.add(() => crystal.rotationReady = true)
       // crystal.events.onInputUp.add(() => crystal.rotationReady = false)
     })
