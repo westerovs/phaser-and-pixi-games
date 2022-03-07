@@ -2,8 +2,8 @@ class Game {
   constructor() {
     this.game = null
     
-    this.arrow  = null;
-    this.ball = null;
+    this.block  = null
+    this.target = null
     this.delta  = {x: 0, y: 0}
     
     this.init()
@@ -24,28 +24,53 @@ class Game {
   }
   
   preload = () => {
-    this.game.load.image('arrow', './src/img/longarrow.png');
-    this.game.load.image('ball', './src/img/pangball.png');
+    this.game.load.image('block', './src/img/block.png')
+    this.game.load.image('ball', './src/img/pangball.png')
   }
   
   create = () => {
     this.game.stage.backgroundColor = '#0072bc'
     this.game.input.addMoveCallback(this.onTouchMove)
     
-    this.arrow = this.createBlock(200, 250, 0, 0.5)
+    this.block = this.createArrow(200, 250, 0, 0.5)
+    this.block.anchor.set(0.5)
+    // this.block.rotation = -0.4326641357405498
     
-    this.arrow.events.onInputDown.add((_, {x, y}) => {
-      this.ball = this.createTarget(x + this.delta.x, y + this.delta.y)
+    this.block.events.onInputDown.add((_, {x, y}) => {
+      this.target = this.createTarget(x + this.delta.x, y + this.delta.y)
     })
     
-    this.arrow.events.onInputUp.add(() => {
-      this.ball.destroy()
-      this.ball = null
+    this.block.events.onInputUp.add(() => {
+      this.target.destroy()
+      this.target = null
     })
+  
   }
   
-  createBlock = (x, y, anchorX = 0.5, anchorY = 0.5) => {
-    const block = this.game.add.sprite(x, y, 'arrow')
+  update = () => {
+    if (this.target) {
+      // устанавливает поворот для стрелочки
+      console.log(this.game.physics.arcade.angleBetween(this.block, this.target))
+      // this.block.rotation = this.game.physics.arcade.angleBetween(this.target, this.block)
+      this.block.rotation = this.game.physics.arcade.angleBetween(this.block, this.target)
+      if (this.block.rotation >= 0.00) return
+    }
+  }
+  
+  render = () => {
+    this.game.debug.text('Arrow', 20, 20, '#FF00AE');
+    this.game.debug.spriteInfo(this.block, 20, 40)
+    this.game.debug.spriteBounds(this.block)
+    
+    if (this.target) {
+      this.game.debug.text('Target', 360, 20, '#FF00AE');
+      this.game.debug.spriteBounds(this.target)
+      this.game.debug.spriteInfo(this.target, 360, 40)
+    }
+  }
+  
+  createArrow = (x, y, anchorX = 0.5, anchorY = 0.5) => {
+    const block = this.game.add.sprite(x, y, 'block')
     block.anchor.setTo(anchorX, anchorY)
     block.inputEnabled = true
     
@@ -58,25 +83,14 @@ class Game {
     target.inputEnabled = true
     target.input.enableDrag(true)
     // target.scale.set(3)
-
+    
     return target
   }
   
-  update = () => {
-    if (this.ball) {
-      this.arrow.rotation = this.game.physics.arcade.angleBetween(this.arrow, this.ball)
-    }
-  }
-  
-  render = () => {
-    this.game.debug.text("Drag the ball", 32, 32);
-    this.game.debug.spriteInfo(this.arrow, 32, 100);
-  }
-  
   onTouchMove = (pointer, x, y) => {
-    if (this.ball) {
-      console.log('onTouchMove')
-      this.ball.position.set(x + this.delta.x, y + this.delta.y)
+    if (this.target) {
+      // делает custom drag для target, инициализирует его в месте курсора
+      this.target.position.set(x + this.delta.x, y + this.delta.y)
     }
   }
 }

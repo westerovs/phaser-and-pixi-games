@@ -33,8 +33,8 @@ class Game {
     this.game.input.addMoveCallback(this.onTouchMove)
     this.game.stage.backgroundColor = '#0072bc'
 
-    this.block1 = this.createBlock(200, 200)
-    this.target1 = this.createTarget(200, 200)
+    this.block1 = this.createBlock(200, 200, 0.5, 0.5)
+    this.target1 = this.createTarget(500, 200)
 
   }
   
@@ -51,7 +51,7 @@ class Game {
     target.anchor.setTo(anchorX, anchorY)
     target.inputEnabled = true
     target.input.enableDrag(true)
-    target.scale.set(3)
+    // target.scale.set(3)
     
     return target
   }
