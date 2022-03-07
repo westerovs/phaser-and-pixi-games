@@ -1,12 +1,15 @@
-import { crystalPartsParams, crystalParts } from './const.js';
+// import { crystalPartsParams, crystalParts } from './const.js';
+import Crystal from './Crystal.js'
 
-class Game {
+export default  class Game {
   constructor() {
     this.game  = null
     this.target = null
-    
-    this.crystalPartsParams = crystalPartsParams
-    this.crystalParts = crystalParts
+    this.crystal = null
+    // this.currentCrystal = null
+
+    // this.crystalPartsParams = crystalPartsParams
+    // this.crystalParts = crystalParts
   }
 
   init() {
@@ -41,71 +44,89 @@ class Game {
   }
 
   create = () => {
+    this.crystal = new Crystal(this.game)
+    
     this.game.add.sprite(200, 90, 'crystalBodyWrap')
-
-    this.createCrystalParts()
+    // this.createCrystalParts()
     this.game.add.sprite(190, 185, 'dots')
   
-
-    this.target = this.createTarget()
+    this.crystal.createCrystalParts()
   }
 
   update = () => {
-    this.crystalParts.crystalRight.rotation = this.game.physics.arcade.angleBetween(
-      this.crystalParts.crystalRight,
-      this.target
-    )
+    // if (this.target && this.currentCrystal) {
+    //   this.currentCrystal.rotation = this.game.physics.arcade
+    //     // .angleBetween(this.crystalParts.crystalRight, this.target)
+    //     .angleBetween(this.target, this.crystalParts.crystalRight)
+    // }
   }
 
   render = () => {
-    this.game.debug.spriteBounds(this.crystalParts.crystalRight)
+    // this.game.debug.spriteBounds(this.crystalParts.crystalRight)
   }
   
-  createTarget = () => {
-    const posX = this.crystalParts.crystalRight.position.x - this.crystalParts.crystalRight.width / 2
-    const posY = this.crystalParts.crystalRight.position.y - this.crystalParts.crystalRight.height / 2
+  // createTarget = (x, y) => {
+  //   const target = this.game.add.sprite(x, y, 'target')
+  //
+  //   target.anchor.setTo(0.5, 0.5)
+  //   target.inputEnabled = true
+  //   target.input.enableDrag(true)
+  //
+  //   return target
+  // }
   
-    const target = this.game.add.sprite(posX, posY, 'target')
-  
+  // createCrystalParts = () => {
+  //   this.crystalPartsParams.forEach(item => {
+  //     const crystal = this.game.add.sprite(item.x, item.y, item.key)
+  //
+  //     // определить в массив части кристалов
+  //     switch (item.key) {
+  //       case 'crystalBody':
+  //         this.crystalParts.crystalBody = crystal
+  //         break;
+  //       case 'crystalLeft':
+  //         this.crystalParts.crystalLeft = crystal
+  //         break;
+  //       case 'crystalTop':
+  //         this.crystalParts.crystalTop = crystal
+  //         break;
+  //       case 'crystalRight':
+  //         this.crystalParts.crystalRight = crystal
+  //         break;
+  //     }
+  //
+  //     crystal.anchor.set(item.anchor.x, item.anchor.y)
+  //     crystal.angle = item.angle
+  //     crystal.inputEnabled = true
+  //     this.addedEvents(crystal)
+  //
+  //     // crystal.events.onInputDown.add(() => crystal.rotationReady = true)
+  //     // crystal.events.onInputUp.add(() => crystal.rotationReady = false)
+  //   })
+  // }
 
-    const anchorX = this.crystalParts.crystalRight.anchor.x
-    const anchorY = this.crystalParts.crystalRight.anchor.y
-    
-    target.anchor.setTo(anchorX, anchorY)
-    target.inputEnabled = true
-    target.input.enableDrag(true)
-    
-    return target
-  }
-  
-  createCrystalParts = () => {
-    this.crystalPartsParams.forEach((item, index) => {
-      const crystal = this.game.add.sprite(item.x, item.y, item.key)
-
-      // определить в массив части кристалов
-      switch (item.key) {
-        case 'crystalBody':
-          this.crystalParts.crystalBody = crystal
-          break;
-        case 'crystalLeft':
-          this.crystalParts.crystalLeft = crystal
-          break;
-        case 'crystalTop':
-          this.crystalParts.crystalTop = crystal
-          break;
-        case 'crystalRight':
-          this.crystalParts.crystalRight = crystal
-          break;
-      }
-
-      crystal.anchor.set(item.anchor.x, item.anchor.y)
-      crystal.angle = item.angle
-      crystal.inputEnabled = true
-
-      // crystal.events.onInputDown.add(() => crystal.rotationReady = true)
-      // crystal.events.onInputUp.add(() => crystal.rotationReady = false)
-    })
-  }
+  // onTouchMove = (pointer, x, y) => {
+  //   if (this.target) {
+  //     // делает custom drag для target, инициализирует его в месте курсора
+  //     this.target.position.set(x, y)
+  //   }
+  // }
+  //
+  // addedEvents = (crystal) => {
+  //   //touchStart
+  //   crystal.events.onInputDown.add((_, {x, y}) => {
+  //     this.currentCrystal = crystal
+  //     this.target = this.createTarget(x, y)
+  //   })
+  //   //touchMove
+  //   this.game.input.addMoveCallback(this.onTouchMove)
+  //   //touchEnd
+  //   crystal.events.onInputUp.add(() => {
+  //     this.target.destroy()
+  //     this.target = null
+  //     this.currentCrystal = null
+  //   })
+  // }
 }
 
 new Game().init()
