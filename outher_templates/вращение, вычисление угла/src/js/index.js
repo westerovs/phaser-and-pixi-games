@@ -46,11 +46,11 @@ class Game {
     console.clear()
     this.group = this.game.add.group()
 
-    // new Part(this.game, 200, 200, Anchor.T_L, 'T_L')
+    new Part(this.game, 200, 200, Anchor.T_L, 'T_L')
     new Part(this.game,400, 400, Anchor.CENTER, 'center')
-    // new Part(this.game,600, 200, Anchor.T_R, 'T_R')
-    // new Part(this.game,200, 600, Anchor.B_L, 'B_L')
-    // new Part(this.game,600, 600, Anchor.B_R, 'B_R')
+    new Part(this.game,600, 200, Anchor.T_R, 'T_R')
+    new Part(this.game,200, 600, Anchor.B_L, 'B_L')
+    new Part(this.game,600, 600, Anchor.B_R, 'B_R')
   }
 
 

@@ -44,7 +44,6 @@ class Game {
       this.target.destroy()
       this.target = null
     })
-  
   }
   
   update = () => {

@@ -1,5 +1,3 @@
-
-
 export default class Part {
   constructor(game, x, y, anchor, name) {
     this.game = game
@@ -28,7 +26,7 @@ export default class Part {
     this.block.inputEnabled = true
     this.block.angle = this.startProgress
     // this.block.anchor.set(...this.anchor)
-    this.block.anchor.set(1)
+    this.block.anchor.set(0.5)
   
     this.block.events.onInputDown.add(this.touchStart)
     this.block.events.onInputUp.add(this.touchUp)
@@ -83,9 +81,3 @@ export default class Part {
     console.log('UP')
   }
 }
-
-// new Part(200, 200, Anchor.T_L, 'T_L')
-// new Part(400, 400, Anchor.CENTER, 'center')
-// new Part(600, 200, Anchor.T_R, 'T_R')
-// new Part(200, 600, Anchor.B_L, 'B_L')
-// new Part(600, 600, Anchor.B_R, 'B_R')
