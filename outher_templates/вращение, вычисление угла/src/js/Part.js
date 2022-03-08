@@ -28,7 +28,7 @@ export default class Part {
     this.block.inputEnabled = true
     this.block.angle = this.startProgress
     // this.block.anchor.set(...this.anchor)
-    this.block.anchor.set(0.5)
+    this.block.anchor.set(1)
   
     this.block.events.onInputDown.add(this.touchStart)
     this.block.events.onInputUp.add(this.touchUp)
@@ -51,6 +51,7 @@ export default class Part {
   }
   
   touchMove = (pointer) => {
+    if (!pointer.isDown) return
     if (!this.startTouches) return
   
     // получаем координаты текущего касания
