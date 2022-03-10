@@ -20,7 +20,7 @@ class Game {
   }
   
   preload = () => {
-    this.game.load.image('block', '/src/img/block1.png')
+    this.game.load.image('block', '/src/img/arrow.png')
   }
   
   create = () => {
