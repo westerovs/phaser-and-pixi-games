@@ -143,7 +143,7 @@ class Game {
 
       crystal.body.clearShapes() // clearShapes - удаляет квадратную форму
       crystal.body.loadPolygon('physicsData', crystal.key) // загружает данные полигона в объекты
-      // crystal.body.fixedRotation = true // выкл поворот
+      crystal.body.fixedRotation = true // выкл поворот
 
       if (crystal.key === 'crystalBody') {
         // kinematic

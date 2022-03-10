@@ -20,8 +20,7 @@ const crystalPartsParams = [
     x     : 200,
     y     : 240,
     anchor: [0, 1],
-    // initAngle: -60,
-    initAngle: 0,
+    initAngle: -60,
   },
   {
     key   : crystalName.crystalTop,
@@ -29,8 +28,7 @@ const crystalPartsParams = [
     x     : 282,
     y     : 138,
     anchor: [1, 0.599],
-    // initAngle: 80,
-    initAngle: 0,
+    initAngle: 80,
   },
   {
     key   : crystalName.crystalRight,
@@ -38,8 +36,7 @@ const crystalPartsParams = [
     x     : 460,
     y     : 125,
     anchor: [1, 0.65],
-    // initAngle: 120,
-    initAngle: 0,
+    initAngle: 120,
   },
 ]
 

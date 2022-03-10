@@ -1,3 +1,12 @@
+const isWin = (crystal) => {
+  const rotation = +crystal.rotation.toFixed(2)
+
+  if (rotation >= 0 && rotation <= 0.02) {
+    crystal.alpha = 1
+    crystal.disabled = true
+  }
+}
+
 export default class Part {
   constructor(game, x, y, anchor, sprite, disabled = false, initAngle) {
     this.game = game
@@ -27,13 +36,19 @@ export default class Part {
   
   #create = () => {
     this.block = this.game.add.sprite(this.positionPartX + (this.anchorX * 100), this.positionPartY + (this.anchorY * 100), this.sprite)
+    this.block.alpha = this.disabled ? 1 : 0.5
     
     this.block.inputEnabled = this.disabled ? false : true
+    this.block.inputEnabled = true
     this.block.angle = this.startProgress
     this.block.anchor.set(...this.anchor)
     
     this.block.events.onInputDown.add(this.#touchStart)
     this.block.events.onInputUp.add(this.#touchUp)
+    
+    // this.block.input.pixelPerfectClick = true;
+    // this.block.input.pixelPerfectOver = true;
+    // this.block.input.useHandCursor = true;
     
     this.game.world.add(this.block)
     return this.block
@@ -54,7 +69,9 @@ export default class Part {
     this.game.input.addMoveCallback(this.#touchMove)
   }
   
-  #touchMove = (pointer) => {
+  #touchMove = (pointer, crystal) => {
+    if (this.block.disabled) return;
+    
     if (!this.block.isPressed) return
     if (!pointer.isDown || !this.startTouches) return
     
@@ -84,6 +101,9 @@ export default class Part {
     
     this.val = this.degreeAngle + this.nex
     this.block.angle = this.val
+  
+    //  ==================
+    isWin(this.block)
   }
   
   #touchUp = () => {

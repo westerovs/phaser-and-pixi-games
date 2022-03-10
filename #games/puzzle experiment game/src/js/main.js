@@ -38,31 +38,38 @@ export default  class Game {
     this.game.load.image('crystalTop', '/src/img/crystalTop.png')
     this.game.load.image('crystalRight', '/src/img/crystalRight.png')
     this.game.load.image('dots', '/src/img/dots.png')
+  
+    // загрузка физики
+    this.game.load.physics('physicsData', 'src/sprites.json')
   }
 
   create = () => {
     this.game.add.sprite(200, 90, 'crystalBodyWrap')
-    this.game.add.sprite(190, 185, 'dots')
-  
     this.#createCrystals()
+    this.game.add.sprite(190, 185, 'dots')
   }
 
   update = () => {
   }
 
   render = () => {
+    this.crystals.forEach(crystal => {
+      this.game.debug.spriteBounds(crystal.block)
+    })
   }
   
   #createCrystals = () => {
     crystalPartsParams.forEach(crystal => {
-      new Part(
-        this.game,
-        crystal.x,
-        crystal.y,
-        crystal.anchor,
-        crystal.key,
-        crystal.isDisabled,
-        crystal.initAngle
+      this.crystals.push(
+        new Part(
+          this.game,
+          crystal.x,
+          crystal.y,
+          crystal.anchor,
+          crystal.key,
+          crystal.isDisabled,
+          crystal.initAngle
+        )
       )
     })
   }
