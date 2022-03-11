@@ -29,7 +29,7 @@ const createError = () => {
 }
 
 export default class Part {
-  constructor(game, x, y, anchor, sprite, disabled = false, initAngle, finishAngle) {
+  constructor(game, x, y, anchor, sprite, disabled = false, initAngle, finishAngle, children) {
     this.game = game
     this.positionPartX = x
     this.positionPartY = y
@@ -40,9 +40,14 @@ export default class Part {
     this.disabled = disabled
     this.initAngle = initAngle
     this.finishAngle = finishAngle
+    this.children = children
     
-    this.group = null
+    //
+    this.mainGroup = game.add.group()
+    this.mainGroupChildren = null
     this.block = null
+    
+    // параметры вращения
     this.progress = 0
     this.startProgress = this.initAngle
     this.val = 0
@@ -54,28 +59,29 @@ export default class Part {
   }
   
   init = () => {
-    this.#create()
+    this.#createBlock()
   }
   
-  #create = () => {
-    this.group = this.game.add.group()
-    
+  #createBlock = () => {
     this.block = this.game.make.image(this.positionPartX + (this.anchorX * 100), this.positionPartY + (this.anchorY * 100), this.sprite)
     this.block.inputEnabled = this.disabled ? false : true
     this.block.angle = this.startProgress
     this.block.anchor.set(...this.anchor)
-    
-    this.block.events.onInputDown.add(this.#touchStart)
-    this.block.events.onInputUp.add(this.#touchUp)
   
-    this.group.add(this.block)
-    this.game.world.add(this.group)
-    this.group.position.set(0, 0)
+    this.mainGroup.add(this.block)
+    this.game.world.add(this.mainGroup)
+    this.#initEvents()
 
     return this.block
   }
   
-  #touchStart = (sprite, pointer) => {
+  #initEvents = () => {
+    this.block.events.onInputDown.add(this.#onTouchStart)
+    this.game.input.addMoveCallback(this.#onTouchMove)
+    this.block.events.onInputUp.add(this.#OnTouchUp)
+  }
+  
+  #onTouchStart = (sprite, pointer) => {
     this.block.isPressed = true
     
     this.startProgress = this.progress
@@ -86,11 +92,9 @@ export default class Part {
       x: pointer.x,
       y: pointer.y
     }
-    
-    this.game.input.addMoveCallback(this.#touchMove)
   }
   
-  #touchMove = (pointer) => {
+  #onTouchMove = (pointer) => {
     if (this.block.disabled) return;
     
     if (!this.block.isPressed) return
@@ -127,7 +131,7 @@ export default class Part {
     isWin(this.game, this.block)
   }
   
-  #touchUp = () => {
+  #OnTouchUp = () => {
     this.block.isPressed = false
     
     if (this.block.disabled) return

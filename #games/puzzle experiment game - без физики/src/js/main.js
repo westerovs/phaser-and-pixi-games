@@ -1,4 +1,4 @@
-import {crystalParts, crystalPartsParams} from './const.js';
+import {crystalParts, crystalPartsParams} from './config.js';
 import Part from './Crystal.js';
 
 class SpritePosition {
@@ -217,6 +217,7 @@ export default  class Game {
           crystal.isDisabled,
           crystal.initAngle,
           crystal.finishAngle,
+          crystal.children
         ).block
       )
     })
