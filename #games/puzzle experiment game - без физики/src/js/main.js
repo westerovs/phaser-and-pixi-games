@@ -53,8 +53,12 @@ class SpritePosition {
   
   #updateElementInfo = () => {
     this.ElementInfo.NAME.innerHTML  = `Sprite: ${ this.spriteName }`
-    this.ElementInfo.X.innerHTML     = `X: ${ Math.trunc(this.sprite.position.x) }`
-    this.ElementInfo.Y.innerHTML     = `Y: ${ Math.trunc(this.sprite.position.y) }`
+    // this.ElementInfo.X.innerHTML     = `X: ${ Math.trunc(this.sprite.position.x) }`
+    // this.ElementInfo.Y.innerHTML     = `Y: ${ Math.trunc(this.sprite.position.y) }`
+    // anchor true
+    this.ElementInfo.X.innerHTML     = `X: ${ Math.trunc(this.sprite.position.x - (this.sprite.anchor.x * 100)) }`
+    this.ElementInfo.Y.innerHTML     = `Y: ${ Math.trunc(this.sprite.position.y - (this.sprite.anchor.y * 100)) }`
+    
     this.ElementInfo.ANGLE.innerHTML = `Angle: ${ Math.trunc(this.sprite.angle) }`
   }
 
@@ -74,9 +78,9 @@ class SpritePosition {
         font-family: Monospace, Arial;
         font-size: ${this.scalePanel ? this.scalePanel : 2}em;
         line-height: ${this.scalePanel ? this.scalePanel : 2}em;
-        background: rgba(0, 0, 0, 0.6);
+        background: rgba(0, 0, 0, 0.3);
         border-radius: 15px;
-        box-shadow: 5px 5px 5px black;
+        box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
         color: white;
         z-index: 999;
     `)
@@ -92,7 +96,6 @@ class SpritePosition {
     wrapInfo.append(this.ElementInfo.ANGLE)
   
     this.#updateElementInfo()
-  
     document.body.append(wrapInfo)
   }
 
@@ -146,7 +149,6 @@ class SpritePosition {
     });
   }
 }
-new SpritePosition(this.sprites)
 
 export default  class Game {
   constructor() {
@@ -191,7 +193,7 @@ export default  class Game {
     this.game.add.sprite(200, 90, 'crystalBodyWrap')
     this.#createCrystals()
   
-    new SpritePosition(this.crystals)
+    // new SpritePosition(this.crystals)
   }
 
   update = () => {
@@ -199,7 +201,7 @@ export default  class Game {
 
   render = () => {
     // this.crystals.forEach(crystal => {
-    //   this.game.debug.spriteBounds(crystal.block)
+    //   if (crystal.key === 'crystalLeftBig') this.game.debug.spriteBounds(crystal)
     // })
   }
   
@@ -213,7 +215,8 @@ export default  class Game {
           crystal.anchor,
           crystal.key,
           crystal.isDisabled,
-          crystal.initAngle
+          crystal.initAngle,
+          crystal.finishAngle,
         ).block
       )
     })

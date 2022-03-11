@@ -1,21 +1,27 @@
-const isWin = (crystal) => {
+const isWin = (game, crystal) => {
   const rotation = +crystal.rotation.toFixed(2)
 
-  if (rotation >= 0 && rotation <= 0.03) {
-    crystal.alpha = 1
+  // авто-доводка если фигура становится на базу
+  if (Math.abs(rotation) >= 0 && Math.abs(rotation) <= 0.15) {
+    crystal.tint = 0x2DE200
     crystal.disabled = true
+  
+    game.add.tween(crystal)
+      .to({
+        angle: 0,
+      }, Phaser.Timer.HALF / 2, Phaser.Easing.Linear.None, true)
   }
   
-  switch (crystal.key) {
-    case 'crystalLeft': console.log(rotation)
-      break;
-    case 'crystalTop': console.log(rotation)
-      break;
-    case 'crystalRight':
-      console.log(rotation)
-      if (rotation >= -2.15 && rotation <= -2) console.warn(true)
-      break;
-  }
+  // switch (crystal.key) {
+  //   case 'crystalLeft': console.log(rotation)
+  //     break;
+  //   case 'crystalTop': console.log(rotation)
+  //     break;
+  //   case 'crystalRight':
+  //     // console.log(rotation)
+  //     if (rotation >= -2.15 && rotation <= -2) console.warn(true)
+  //     break;
+  // }
 }
 
 const createError = () => {
@@ -23,7 +29,7 @@ const createError = () => {
 }
 
 export default class Part {
-  constructor(game, x, y, anchor, sprite, disabled = false, initAngle) {
+  constructor(game, x, y, anchor, sprite, disabled = false, initAngle, finishAngle) {
     this.game = game
     this.positionPartX = x
     this.positionPartY = y
@@ -33,6 +39,7 @@ export default class Part {
     this.sprite = sprite
     this.disabled = disabled
     this.initAngle = initAngle
+    this.finishAngle = finishAngle
     
     this.group = null
     this.block = null
@@ -54,8 +61,6 @@ export default class Part {
     this.group = this.game.add.group()
     
     this.block = this.game.make.image(this.positionPartX + (this.anchorX * 100), this.positionPartY + (this.anchorY * 100), this.sprite)
-    // this.block.alpha = this.disabled ? 1 : 0.5
-    
     this.block.inputEnabled = this.disabled ? false : true
     this.block.angle = this.startProgress
     this.block.anchor.set(...this.anchor)
@@ -119,7 +124,7 @@ export default class Part {
     this.block.angle = this.val
   
     //  ==================
-    isWin(this.block)
+    isWin(this.game, this.block)
   }
   
   #touchUp = () => {
