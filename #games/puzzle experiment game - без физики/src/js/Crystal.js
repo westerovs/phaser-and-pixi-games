@@ -1,10 +1,25 @@
 const isWin = (crystal) => {
   const rotation = +crystal.rotation.toFixed(2)
 
-  if (rotation >= 0 && rotation <= 0.02) {
+  if (rotation >= 0 && rotation <= 0.03) {
     crystal.alpha = 1
     crystal.disabled = true
   }
+  
+  switch (crystal.key) {
+    case 'crystalLeft': console.log(rotation)
+      break;
+    case 'crystalTop': console.log(rotation)
+      break;
+    case 'crystalRight':
+      console.log(rotation)
+      if (rotation >= -2.15 && rotation <= -2) console.warn(true)
+      break;
+  }
+}
+
+const createError = () => {
+
 }
 
 export default class Part {
@@ -19,6 +34,7 @@ export default class Part {
     this.disabled = disabled
     this.initAngle = initAngle
     
+    this.group = null
     this.block = null
     this.progress = 0
     this.startProgress = this.initAngle
@@ -35,22 +51,22 @@ export default class Part {
   }
   
   #create = () => {
-    this.block = this.game.add.sprite(this.positionPartX + (this.anchorX * 100), this.positionPartY + (this.anchorY * 100), this.sprite)
-    this.block.alpha = this.disabled ? 1 : 0.5
+    this.group = this.game.add.group()
+    
+    this.block = this.game.make.image(this.positionPartX + (this.anchorX * 100), this.positionPartY + (this.anchorY * 100), this.sprite)
+    // this.block.alpha = this.disabled ? 1 : 0.5
     
     this.block.inputEnabled = this.disabled ? false : true
-    this.block.inputEnabled = true
     this.block.angle = this.startProgress
     this.block.anchor.set(...this.anchor)
     
     this.block.events.onInputDown.add(this.#touchStart)
     this.block.events.onInputUp.add(this.#touchUp)
-    
-    // this.block.input.pixelPerfectClick = true;
-    // this.block.input.pixelPerfectOver = true;
-    // this.block.input.useHandCursor = true;
-    
-    this.game.world.add(this.block)
+  
+    this.group.add(this.block)
+    this.game.world.add(this.group)
+    this.group.position.set(0, 0)
+
     return this.block
   }
   
@@ -69,7 +85,7 @@ export default class Part {
     this.game.input.addMoveCallback(this.#touchMove)
   }
   
-  #touchMove = (pointer, crystal) => {
+  #touchMove = (pointer) => {
     if (this.block.disabled) return;
     
     if (!this.block.isPressed) return
@@ -108,5 +124,9 @@ export default class Part {
   
   #touchUp = () => {
     this.block.isPressed = false
+    
+    if (this.block.disabled) return
+    
+    this.block.angle = this.initAngle
   }
 }
