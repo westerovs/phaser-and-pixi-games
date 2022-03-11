@@ -105,13 +105,17 @@ class Game {
       }
   
       crystal.anchor.set(item.anchor.x, item.anchor.y)
-      crystal.angle = item.angle
+  
       crystal.freezePosition = {x: item.x, y: item.y}
       crystal.prevPointerPos = {x: 0, y: 0}
   
       
       //input
       crystal.inputEnabled = true
+  
+      setTimeout(() => {
+        crystal.body.angle = 100
+      }, 1000)
     })
   }
   
@@ -154,13 +158,6 @@ class Game {
         crystal.body.fixedRotation = true // выкл поворот
         crystal.body.dynamic = false // выкл поворот
         // crystal.body.static = true //  Make static
-  
-        // setInterval(() => {
-        //   this.game.add.tween(crystal)
-        //     .to({
-        //       angle: 230,
-        //     }, Phaser.Timer.HALF / 2, Phaser.Easing.Linear.None, true).yoyo(true)
-        // }, 1000)
       }
   
       // collideWorldBounds - должен ли спрайт столкнуться с границами мира или нет
@@ -182,7 +179,8 @@ class Game {
       this.crystalParts.crystalRight,
     ])
   
-    // p2 использует другую систему координат, поэтому преобразуйте положение указателя в систему координат p2
+    // p2 использует другую систему координат,
+    // поэтому преобразуйте положение указателя в систему координат p2
     const physicsPos = [
       this.game.physics.p2.pxmi(pointer.position.x),
       this.game.physics.p2.pxmi(pointer.position.y)
