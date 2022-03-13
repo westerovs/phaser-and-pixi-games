@@ -1,4 +1,4 @@
-import { observer } from './abstract/observer.js';
+import { observer } from './utils/abstract/observer.js';
 import {crystalPartsParams} from './config/config.js';
 import {crystals} from './const.js';
 import Part from './components/Crystal.js';
