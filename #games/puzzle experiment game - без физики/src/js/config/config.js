@@ -8,7 +8,7 @@ const crystalName = {
 
 const crystalPartsParams = [
   {
-    key        : crystalName.crystalBody,
+    _name       : crystalName.crystalBody,
     isDisabled : true,
     x          : 380,
     y          : 296,
@@ -19,7 +19,7 @@ const crystalPartsParams = [
     children   : null,
   },
   {
-    key        : crystalName.crystalLeft,
+    _name       : crystalName.crystalLeft,
     isDisabled : false,
     x          : 202,
     y          : 246,
@@ -30,7 +30,7 @@ const crystalPartsParams = [
     children   : null,
   },
   {
-    key        : crystalName.crystalLeftBig,
+    _name       : crystalName.crystalLeftBig,
     isDisabled : false,
     x          : 245,
     y          : 345,
@@ -41,7 +41,7 @@ const crystalPartsParams = [
     children   : null,
   },
   {
-    key        : crystalName.crystalTop,
+    _name       : crystalName.crystalTop,
     isDisabled : false,
     x          : 284,
     y          : 141,
@@ -52,7 +52,7 @@ const crystalPartsParams = [
     children   : null,
   },
   {
-    key        : crystalName.crystalRight,
+    _name       : crystalName.crystalRight,
     isDisabled : false,
     x          : 461,
     y          : 127,

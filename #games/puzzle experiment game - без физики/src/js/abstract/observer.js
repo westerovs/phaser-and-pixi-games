@@ -18,9 +18,10 @@ export const observer = {
   }
 }
 
-// const func1 = () => console.log('function 1')
-// const func2 = () => console.log('function 2')
-
+// const func1 = () => console.log('*** function 1')
+// const func2 = () => console.log('*** function 2')
+//
 // observer.addObserver(func1)
 // observer.addObserver(func2)
-
+//
+// observer.notify(func1)

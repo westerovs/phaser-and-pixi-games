@@ -1,47 +1,78 @@
-import { crystalPartsParams } from './config.js';
+import {crystals} from '../const.js'
 
-const isWin = (game, crystal) => {
-  const rotation = +crystal.rotation.toFixed(2)
-
-  // авто-доводка если фигура становится на базу
-  if (Math.abs(rotation) >= 0 && Math.abs(rotation) <= 0.15) {
-    crystal.tint = 0x2DE200
-    crystal.disabled = true
-  
-    game.add.tween(crystal)
-      .to({
-        angle: 0,
-      }, Phaser.Timer.HALF / 2, Phaser.Easing.Linear.None, true)
+class IsWin {
+  constructor(game) {
+    this.game = game
+    this.crystal = null
+    
+    this.rotation = null
+    this.booleanRotate = true
   }
   
-  // if (crystal.key === 'crystalTop' && !crystal.isComplete) {
-  //
-  // }
-  // switch (crystal.key) {
-  //   case 'crystalLeft': console.log(rotation)
-  //     break;
-  //   case 'crystalTop': console.log(rotation)
-  //     break;
-  //   case 'crystalRight':
-  //     // console.log(rotation)
-  //     if (rotation >= -2.15 && rotation <= -2) console.warn(true)
-  //     break;
-  // }
+  checkOnFinishRotate = (crystal) => {
+    console.log(this.rotation)
+    this.crystal = crystal
+    this.rotation = +crystal.rotation.toFixed(2)
+    
+    crystals.find(item => {
+      if (item.key === 'crystalTop' && !item.isComplete) {
+        switch (this.crystal.key) {
+          case 'crystalLeft':
+            break;
+          case 'crystalTop':
+            break;
+          case 'crystalRight':
+            if (this.rotation >= 0.90 && this.rotation <= 1.12) {
+              console.warn('СТОЛКНОВЕНИЕ')
+              this.booleanRotate = false
+            }
+            if (this.rotation >= -2.15 && this.rotation <= -2) {
+              console.warn('СТОЛКНОВЕНИЕ')
+              this.booleanRotate = false
+            }
+            break;
+        }
+      }
+    })
+    
+    this.autoRotate()
+    
+    return this.booleanRotate
+  }
+  
+  // авто-доводка если фигура становится на базу
+  autoRotate = () => {
+    if (Math.abs(this.rotation) >= 0 && Math.abs(this.rotation) <= 0.15) {
+      this.crystal.tint = 0x2DE200
+      this.crystal.disabled = true
+
+      game.add.tween(this.crystal)
+        .to({
+          angle: 0,
+        }, Phaser.Timer.HALF / 2, Phaser.Easing.Linear.None, true)
+    }
+  }
+  
+  // return booleanRotate
 }
 
+
 export default class Part {
-  constructor(game, x, y, anchor, sprite, disabled = false, initAngle, finishAngle, children) {
+  constructor(
+    game, x, y, anchor, name, disabled = false,
+    initAngle, finishAngle, isComplete
+  ) {
     this.game = game
     this.positionPartX = x
     this.positionPartY = y
     this.anchor = anchor
     this.anchorX = this.anchor[0]
     this.anchorY = this.anchor[1]
-    this.sprite = sprite
+    this.sprite = name
     this.disabled = disabled
     this.initAngle = initAngle
     this.finishAngle = finishAngle
-    this.children = children
+    this.isComplete = isComplete
     
     //
     this.mainGroup = game.add.group()
@@ -57,16 +88,20 @@ export default class Part {
     this.degreeAngle = null
     this.startTouches = null
     
+    this.isWin = null
     this.init()
   }
   
   init = () => {
     this.#createBlock()
+    this.isWin = new IsWin(this.game)
   }
   
   #createBlock = () => {
     this.block = this.game.make.image(this.positionPartX + (this.anchorX * 100), this.positionPartY + (this.anchorY * 100), this.sprite)
-  
+    this.block.isComplete = this.isComplete
+    this.block.initAngle  = this.initAngle
+    
     this.block.inputEnabled = this.disabled ? false : true
     this.block.angle = this.startProgress
     this.block.anchor.set(...this.anchor)
@@ -128,9 +163,12 @@ export default class Part {
 
     this.degreeAngle = angleDistance * (180 / Math.PI)
     this.val = this.degreeAngle + this.nex
+  
+    if (!this.isWin.checkOnFinishRotate(this.block)) {
+      console.log(`!!!!!!!!!`)
+      return;
+    }
     this.block.angle = this.val
-    
-    isWin(this.game, this.block)
   }
   
   #OnTouchUp = () => {

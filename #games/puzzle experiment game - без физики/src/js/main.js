@@ -1,5 +1,7 @@
-import {crystalPartsParams} from './config.js';
-import Part from './Crystal.js';
+import { observer } from './abstract/observer.js';
+import {crystalPartsParams} from './config/config.js';
+import {crystals} from './const.js';
+import Part from './components/Crystal.js';
 
 class SpritePosition {
   constructor(sprites, scalePanel) {
@@ -154,7 +156,6 @@ export default  class Game {
   constructor() {
     this.game  = null
     this.target = null
-    this.crystals = []
 
     this.target = null
   }
@@ -188,30 +189,29 @@ export default  class Game {
     this.game.add.sprite(200, 90, 'crystalBodyWrap')
     this.#createCrystals()
 
-    // new SpritePosition(this.crystals)
+    // new SpritePosition(crystals)
   }
 
   update = () => {}
 
   render = () => {
-    // this.crystals.forEach(crystal => {
+    // crystals.forEach(crystal => {
     //   if (crystal.key === 'crystalLeftBig') this.game.debug.spriteBounds(crystal)
     // })
   }
 
   #createCrystals = () => {
     crystalPartsParams.forEach(crystal => {
-      this.crystals.push(
-        new Part(
+      crystals.push(new Part(
           this.game,
           crystal.x,
           crystal.y,
           crystal.anchor,
-          crystal.key,
+          crystal._name,
           crystal.isDisabled,
           crystal.initAngle,
           crystal.finishAngle,
-          crystal.children
+          crystal.isComplete
         ).block
       )
     })
