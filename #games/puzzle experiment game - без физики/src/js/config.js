@@ -15,6 +15,7 @@ const crystalPartsParams = [
     anchor     : [0.5, 0.5],
     initAngle  : 0,
     finishAngle: 0,
+    isComplete : false,
     children   : null,
   },
   {
@@ -22,9 +23,10 @@ const crystalPartsParams = [
     isDisabled : false,
     x          : 202,
     y          : 246,
-    anchor     : [0, 1],
-    initAngle  : -60,
+    anchor     : [1, 0],
+    initAngle  : 80,
     finishAngle: 0,
+    isComplete : false,
     children   : null,
   },
   {
@@ -35,18 +37,8 @@ const crystalPartsParams = [
     anchor     : [0.55, 0],
     initAngle  : 50,
     finishAngle: 0,
-    children   : [
-      {
-        key        : crystalName.crystalLeft,
-        isDisabled : false,
-        x          : 202,
-        y          : 246,
-        anchor     : [0, 1],
-        initAngle  : -60,
-        finishAngle: 0,
-        children   : null,
-      },
-    ]
+    isComplete : false,
+    children   : null,
   },
   {
     key        : crystalName.crystalTop,
@@ -56,6 +48,7 @@ const crystalPartsParams = [
     anchor     : [1, 0.599],
     initAngle  : 80,
     finishAngle: 0,
+    isComplete : false,
     children   : null,
   },
   {
@@ -66,6 +59,7 @@ const crystalPartsParams = [
     anchor     : [1, 0.65],
     initAngle  : 120,
     finishAngle: 0,
+    isComplete : false,
     children   : null,
   },
 ]

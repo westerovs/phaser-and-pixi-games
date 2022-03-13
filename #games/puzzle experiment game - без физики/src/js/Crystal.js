@@ -1,3 +1,5 @@
+import { crystalPartsParams } from './config.js';
+
 const isWin = (game, crystal) => {
   const rotation = +crystal.rotation.toFixed(2)
 
@@ -12,6 +14,9 @@ const isWin = (game, crystal) => {
       }, Phaser.Timer.HALF / 2, Phaser.Easing.Linear.None, true)
   }
   
+  // if (crystal.key === 'crystalTop' && !crystal.isComplete) {
+  //
+  // }
   // switch (crystal.key) {
   //   case 'crystalLeft': console.log(rotation)
   //     break;
@@ -22,10 +27,6 @@ const isWin = (game, crystal) => {
   //     if (rotation >= -2.15 && rotation <= -2) console.warn(true)
   //     break;
   // }
-}
-
-const createError = () => {
-
 }
 
 export default class Part {
@@ -44,8 +45,9 @@ export default class Part {
     
     //
     this.mainGroup = game.add.group()
-    this.mainGroupChildren = null
+    this.groupChildren = game.add.group()
     this.block = null
+    this.childBlock = null
     
     // параметры вращения
     this.progress = 0
@@ -64,6 +66,7 @@ export default class Part {
   
   #createBlock = () => {
     this.block = this.game.make.image(this.positionPartX + (this.anchorX * 100), this.positionPartY + (this.anchorY * 100), this.sprite)
+  
     this.block.inputEnabled = this.disabled ? false : true
     this.block.angle = this.startProgress
     this.block.anchor.set(...this.anchor)
@@ -71,7 +74,7 @@ export default class Part {
     this.mainGroup.add(this.block)
     this.game.world.add(this.mainGroup)
     this.#initEvents()
-
+  
     return this.block
   }
   
@@ -122,12 +125,11 @@ export default class Part {
     )
     
     angleDistance *= -1
+
     this.degreeAngle = angleDistance * (180 / Math.PI)
-    
     this.val = this.degreeAngle + this.nex
     this.block.angle = this.val
-  
-    //  ==================
+    
     isWin(this.game, this.block)
   }
   
