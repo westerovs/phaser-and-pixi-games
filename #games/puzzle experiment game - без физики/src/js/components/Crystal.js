@@ -1,5 +1,5 @@
 import {crystals} from '../const.js'
-import {autoRotateOnError} from '../utils/utils.js'
+import {autoRotate} from '../utils/utils.js'
 import IsWin from './isWin.js'
 
 export default class Part {
@@ -30,9 +30,11 @@ export default class Part {
     this.nex = null
     this.degreeAngle = null
     this.startTouches = null
-    
+    this.rotationSpeed = -1
+
     // components
     this.isWin = null
+    this.isWinStatusRotate = null
     
     this.init()
   }
@@ -79,8 +81,8 @@ export default class Part {
   }
   
   #onTouchMove = (pointer) => {
+    // console.log('move')
     if (this.block.disabled) return;
-    
     if (!this.block.isPressed) return
     if (!pointer.isDown || !this.startTouches) return
     
@@ -105,10 +107,9 @@ export default class Part {
       + (center.y - touch.y) * (center.y - this.startTouches.y),
     )
     
-    angleDistance *= -1
-
+    angleDistance *= this.rotationSpeed
     this.degreeAngle = angleDistance * (180 / Math.PI)
-    this.finishVal = this.degreeAngle + this.nex
+    this.finishVal = Math.trunc(this.degreeAngle + this.nex)
   
     this.#checkRotate()
     
@@ -117,13 +118,13 @@ export default class Part {
   
   #checkRotate = () => {
     // если срабатывает событие ошибки, или финиша
-    if (!this.isWin.checkOnFinishRotate(this.block)) {
-      console.log(111)
+    this.isWinStatusRotate = this.isWin.checkOnFinishRotate(this.block)
+    console.log(this.isWinStatusRotate)
+    
+    if (!this.isWinStatusRotate) {
       this.block.angle = this.initAngle
-      // this.block.inputEnabled = false
-      this.isWin.booleanRotate = true
+      this.isWin.StatusRotate = true
       this.game.input.deleteMoveCallback(this.#onTouchMove)
-      // return;
     }
   }
   
@@ -131,8 +132,8 @@ export default class Part {
     this.block.isPressed = false
     if (this.block.disabled) return
     
-    // this.block.angle = this.initAngle
-    autoRotateOnError(this.game, this.block)
+    // если произошла ошибка, то с задержкой в 1сек делать доворот
+    autoRotate(this.game, this.block, null, 0)
       .onComplete.add(() => this.game.input.addMoveCallback(this.#onTouchMove))
   }
 }
