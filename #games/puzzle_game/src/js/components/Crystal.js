@@ -1,8 +1,7 @@
-import {crystals} from '../const.js'
 import {autoRotate} from '../utils/utils.js'
 import IsWin from './isWin.js'
 
-export default class Part {
+export default class Crystal {
   constructor(
     game, x, y, anchor, name, disabled = false,
     initAngle, finishAngle, isComplete
@@ -21,6 +20,10 @@ export default class Part {
     
     //
     this.mainGroup = game.add.group()
+    this.mainGroupOffset = {
+      x: 300,
+      y: 300,
+    }
     this.block = null
     
     // параметры вращения
@@ -36,16 +39,18 @@ export default class Part {
     this.isWin = null
     this.isWinStatusRotate = null
     
+    this.dot = null
     this.init()
   }
   
   init = () => {
+    this.dot = this.game.add.image(0, 0, 'debugDot')
     this.isWin = new IsWin(this.game)
     this.#createBlock()
   }
   
   #createBlock = () => {
-    this.block = this.game.make.image(this.positionPartX + (this.anchorX * 100), this.positionPartY + (this.anchorY * 100), this.sprite)
+    this.block = this.game.make.image(this.positionPartX, this.positionPartY, this.sprite)
     this.block.isComplete = this.isComplete
     this.block.initAngle  = this.initAngle
     
@@ -55,6 +60,7 @@ export default class Part {
     this.block.anchor.set(...this.anchor)
   
     this.mainGroup.add(this.block)
+    this.mainGroup.position.set(this.mainGroupOffset.x, this.mainGroupOffset.y)
     this.game.world.add(this.mainGroup)
     this.#initEvents()
     
@@ -92,19 +98,20 @@ export default class Part {
       y: pointer.y
     }
     
-    // центр объекта
-    const center = {
-      x: this.block.centerX + (this.anchorX * 100),
-      y: this.block.centerY + (this.anchorY * 100)
+    const anchorPosition = {
+      x: this.block.position.x + this.mainGroupOffset.x,
+      y: this.block.position.y + this.mainGroupOffset.y,
     }
+    
+    this.dot.position.set(anchorPosition.x, anchorPosition.y)
     
     // вычисление угла
     let angleDistance = Math.atan2(
-      (center.x - touch.x) * (center.y - this.startTouches.y)
-      - (center.y - touch.y) * (center.x - this.startTouches.x),
+      (anchorPosition.x - touch.x) * (anchorPosition.y - this.startTouches.y)
+      - (anchorPosition.y - touch.y) * (anchorPosition.x - this.startTouches.x),
       
-      (center.x - touch.x) * (center.x - this.startTouches.x)
-      + (center.y - touch.y) * (center.y - this.startTouches.y),
+      (anchorPosition.x - touch.x) * (anchorPosition.x - this.startTouches.x)
+      + (anchorPosition.y - touch.y) * (anchorPosition.y - this.startTouches.y),
     )
     
     angleDistance *= this.rotationSpeed
@@ -117,6 +124,7 @@ export default class Part {
   }
   
   #checkRotate = () => {
+    return
     // если срабатывает событие ошибки, или финиша
     this.isWinStatusRotate = this.isWin.checkOnFinishRotate(this.block)
     console.log(this.isWinStatusRotate)
@@ -131,9 +139,11 @@ export default class Part {
   #OnTouchUp = () => {
     this.block.isPressed = false
     if (this.block.disabled) return
+  
+    this.block.angle = this.initAngle
     
     // если произошла ошибка, то с задержкой в 1сек делать доворот
-    autoRotate(this.game, this.block, null, 0)
-      .onComplete.add(() => this.game.input.addMoveCallback(this.#onTouchMove))
+    // autoRotate(this.game, this.block, null, 0)
+    //   .onComplete.add(() => this.game.input.addMoveCallback(this.#onTouchMove))
   }
 }

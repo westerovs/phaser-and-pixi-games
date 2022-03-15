@@ -18,6 +18,7 @@
     background-color: #2c7580;
     color: #ccc;
     overflow: hidden;
+    padding: 10px 40px;
 }
 
 a {
@@ -35,5 +36,6 @@ img {
 }
 
 canvas {
-    /*cursor: none;*/
+    outline: 2px solid gray;
+    outline-offset: -2px;
 }

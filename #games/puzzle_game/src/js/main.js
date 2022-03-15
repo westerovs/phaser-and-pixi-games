@@ -6,15 +6,13 @@ import Crystal from './components/Crystal.js';
 class Game {
   constructor() {
     this.game  = null
-    this.target = null
-
-    this.target = null
+    this.arr = []
   }
 
   init() {
     this.game = new Phaser.Game(
-      800,
-      800,
+      1366,
+      1366,
       Phaser.CANVAS,
       null,
       {
@@ -34,8 +32,8 @@ class Game {
     this.game.load.image('crystalLeftBig', '/src/img/crystalLeftBig.png')
     this.game.load.image('crystalTop', '/src/img/crystalTop.png')
     this.game.load.image('crystalRight', '/src/img/crystalRight.png')
-    
     this.game.load.image('iconError', '/src/img/icon-error.png')
+    this.game.load.image('debugDot', '/src/img/debug-dot.png')
   }
 
   create = () => {
@@ -54,8 +52,8 @@ class Game {
   update = () => {}
 
   render = () => {
-    // crystals.forEach(crystal => {
-    //   // this.game.debug.spriteBounds(crystal)
+    // Object.values(crystals).forEach(crystal => {
+    //   this.game.debug.spriteBounds(...Object.values(crystal))
     // })
   }
   
@@ -80,4 +78,3 @@ class Game {
 }
 
 new Game().init()
-
