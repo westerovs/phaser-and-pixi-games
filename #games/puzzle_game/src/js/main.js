@@ -1,5 +1,5 @@
 import {crystalPartsParams} from './config/config.js';
-import {crystals, errorIcon, checkCollision} from './const.js';
+import {crystals, errorIcon} from './const.js';
 import ErrorIcon from './components/ErrorIcon.js'
 import Crystal from './components/Crystal.js';
 
