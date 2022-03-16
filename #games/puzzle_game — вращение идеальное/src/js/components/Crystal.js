@@ -124,6 +124,7 @@ export default class Crystal {
   }
   
   #checkRotate = () => {
+    return
     // если срабатывает событие ошибки, или финиша
     this.isWinStatusRotate = this.isWin.checkOnFinishRotate(this.block)
     console.log(this.isWinStatusRotate)

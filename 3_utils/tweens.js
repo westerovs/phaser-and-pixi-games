@@ -95,3 +95,13 @@ const setAlpha = (game, sprite, alpha, second = 1, secondDelay = 0) => {
     .tween(sprite)
     .to({alpha}, Phaser.Timer.SECOND * second, Phaser.Easing.Linear.None, true, secondDelay * 1000)
 }
+
+const tweenTint = (game, spriteToTween, startColor, endColor, duration) => {
+  const colorBlend = {step: 0}
+  
+  return game.add.tween(colorBlend).to({step: 100}, duration, Phaser.Easing.Default, false)
+    .onUpdateCallback(() => {
+      spriteToTween.tint = Phaser.Color.interpolateColor(startColor, endColor, 100, colorBlend.step, 1)
+    })
+    .start()
+}

@@ -1,7 +1,7 @@
 import { crystals, errorIcon } from '../const.js';
 import {autoRotate} from '../utils/utils.js'
 import IqCounter from './IqCounter.js';
-// const iqCounter = new IqCounter()
+const iqCounter = new IqCounter()
 
 export default class IsWin {
   constructor(game) {
@@ -138,7 +138,8 @@ export default class IsWin {
       console.warn('FINISH ROTATE')
   
       this.#setTint()
-      // iqCounter.iqPlus()
+      iqCounter.iqPlus()
+  
   
       this.crystal.disabled = true
       this.crystal.isComplete = true
