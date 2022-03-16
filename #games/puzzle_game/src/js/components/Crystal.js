@@ -30,7 +30,7 @@ export default class Crystal {
     this.progress = 0
     this.startProgress = this.initAngle
     this.finishVal = 0
-    this.nex = null
+    this.angleTouchStart = null
     this.degreeAngle = null
     this.startTouches = null
     this.rotationSpeed = -1
@@ -77,7 +77,7 @@ export default class Crystal {
     this.block.isPressed = true
     
     this.startProgress = this.progress
-    this.nex = parseFloat(this.block.angle)
+    this.angleTouchStart = parseFloat(this.block.angle)
     
     // получаем первые координаты касания
     this.startTouches = {
@@ -116,7 +116,7 @@ export default class Crystal {
     
     angleDistance *= this.rotationSpeed
     this.degreeAngle = angleDistance * (180 / Math.PI)
-    this.finishVal = Math.trunc(this.degreeAngle + this.nex)
+    this.finishVal = Math.trunc(this.degreeAngle + this.angleTouchStart)
   
     this.#checkRotate()
     

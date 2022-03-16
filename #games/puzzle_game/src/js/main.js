@@ -47,6 +47,8 @@ class Game {
     this.errorIcon.createIcon()
     this.errorIcon.errorIcon.alpha = 0
     this.game.world.bringToTop(this.errorIcon.errorIcon)
+    
+    console.warn('dpi: ', window.devicePixelRatio)
   }
 
   update = () => {}
