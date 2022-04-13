@@ -4,15 +4,13 @@ export default class Part {
     this.positionPartX = x
     this.positionPartY = y
     this.anchor = anchor
-    this.anchorX = this.anchor[0]
-    this.anchorY = this.anchor[1]
     this.sprite = sprite
     
     this.block = null
     this.progress = 0
     this.startProgress = 0
-    this.val = 0
-    this.nex = null
+    this.finishVal = 0
+    this.angleTouchStart = null
     this.degreeAngle = null
     this.startTouches = null
     
@@ -24,8 +22,8 @@ export default class Part {
   }
   
   #create = () => {
-    this.block = this.game.add.sprite(this.positionPartX + (this.anchorX * 100), this.positionPartY + (this.anchorY * 100), this.sprite)
-    
+    this.block = this.game.make.image(this.positionPartX, this.positionPartY, this.sprite)
+  
     this.block.inputEnabled = true
     this.block.angle = this.startProgress
     this.block.anchor.set(...this.anchor)
@@ -41,7 +39,7 @@ export default class Part {
     this.block.isPressed = true
   
     this.startProgress = this.progress
-    this.nex = parseFloat(this.block.angle)
+    this.angleTouchStart = parseFloat(this.block.angle)
     
     // получаем первые координаты касания
     this.startTouches = {
@@ -62,26 +60,25 @@ export default class Part {
       y: pointer.y
     }
   
-    // центр объекта
-    const center = {
-      x: this.block.centerX + (this.anchorX * 100),
-      y: this.block.centerY + (this.anchorY * 100)
+    const anchorPosition = {
+      x: this.block.position.x,
+      y: this.block.position.y,
     }
     
     // вычисление угла
     let angleDistance = Math.atan2(
-      (center.x - touch.x) * (center.y - this.startTouches.y)
-      - (center.y - touch.y) * (center.x - this.startTouches.x),
-      
-      (center.x - touch.x) * (center.x - this.startTouches.x)
-      + (center.y - touch.y) * (center.y - this.startTouches.y),
+      (anchorPosition.x - touch.x) * (anchorPosition.y - this.startTouches.y)
+      - (anchorPosition.y - touch.y) * (anchorPosition.x - this.startTouches.x),
+  
+      (anchorPosition.x - touch.x) * (anchorPosition.x - this.startTouches.x)
+      + (anchorPosition.y - touch.y) * (anchorPosition.y - this.startTouches.y),
     )
     
     angleDistance *= -1
     this.degreeAngle = angleDistance * (180 / Math.PI)
   
-    this.val = this.degreeAngle + this.nex
-    this.block.angle = this.val
+    this.finishVal = Math.trunc(this.degreeAngle + this.angleTouchStart)
+    this.block.angle = this.finishVal
   }
   
   #touchUp = () => {
