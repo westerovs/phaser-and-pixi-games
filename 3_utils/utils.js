@@ -38,7 +38,6 @@ const createMask = (game, container, element) => {
 }
 
 const createDarkMask = (game, container, fillAlpha = 0.7) => {
-  // container это this.containers.gameLayer
   const drawing = game.make.graphics(0, 0)
   drawing.beginFill(0x000000)
   drawing.fillAlpha = fillAlpha

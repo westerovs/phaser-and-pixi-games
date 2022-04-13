@@ -66,6 +66,21 @@ const createScaleTween = (game, sprite, repeat = -1, speedSec = 0.5) => {
   })
 }
 
+
+/* анимация уменьшения в ноль 
+ Предварительно стоит сделать проверку:
+     if (this.scaleAnim && this.scaleAnim.isRunning) {
+      this.scaleAnim.stop()
+    }
+*/
+const createScaleAnim = () => {
+  this.scaleAnim = this.game.add.tween(this.errorIcon.scale)
+    .to({x: 0, y: 0},
+      Phaser.Timer.HALF, Phaser.Easing.Linear.None, false, 500)
+  this.scaleAnim.start()
+}
+
+
 // анимация движения вверх-вниз
 const moveUpDown = (game, sprite, y, time = 1) => {
   return game.add.tween(sprite)
@@ -74,13 +89,13 @@ const moveUpDown = (game, sprite, y, time = 1) => {
 
 
 // подходит как hint
-const pulseAlpha = (game, sprite, duration) => {
+const tweenSetAlphaPulseAlpha = (game, sprite, duration) => {
   return game.add.tween(sprite).to(
     {alpha: 0.5,},
     Phaser.Timer.SECOND * duration, Phaser.Easing.Linear.None, false, 100, -1).yoyo(true)
 }
 
-const replaceSpriteAlpha = (game, sprite1, sprite2, second = 1, secondDelay = 0) => {
+const tweenSetAlphaReplaceSpriteAlpha = (game, sprite1, sprite2, second = 1, secondDelay = 0) => {
   return game.add
     .tween(sprite1)
     .to({alpha: 0}, Phaser.Timer.SECOND * second, Phaser.Easing.Linear.None, true, secondDelay * 1000)
@@ -90,16 +105,16 @@ const replaceSpriteAlpha = (game, sprite1, sprite2, second = 1, secondDelay = 0)
 }
 
 
-const setAlpha = (game, sprite, alpha, second = 1, secondDelay = 0) => {
+const tweenSetAlpha = (game, sprite, alpha, second = 1, secondDelay = 0) => {
   return game.add
     .tween(sprite)
     .to({alpha}, Phaser.Timer.SECOND * second, Phaser.Easing.Linear.None, true, secondDelay * 1000)
 }
 
-const tweenTint = (game, spriteToTween, startColor, endColor, duration) => {
+const tweenTint = (game, spriteToTween, startColor, endColor, duration = 0) => {
   const colorBlend = {step: 0}
   
-  return game.add.tween(colorBlend).to({step: 100}, duration, Phaser.Easing.Default, false)
+  return game.add.tween(colorBlend).to({step: 100}, 1000 * duration, Phaser.Easing.Default, false)
     .onUpdateCallback(() => {
       spriteToTween.tint = Phaser.Color.interpolateColor(startColor, endColor, 100, colorBlend.step, 1)
     })

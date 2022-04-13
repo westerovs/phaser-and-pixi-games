@@ -118,7 +118,7 @@ export default class Crystal {
     this.degreeAngle = angleDistance * (180 / Math.PI)
     this.finishVal = Math.trunc(this.degreeAngle + this.angleTouchStart)
   
-    this.#checkRotate()
+    // this.#checkRotate()
     
     this.block.angle = this.finishVal
   }
