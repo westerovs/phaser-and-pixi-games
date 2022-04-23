@@ -5,7 +5,7 @@ class SpritePosition {
     this.sprite = null
     this.spritesLength = Object.entries(sprites).length - 1
     this.spriteName = null
-    
+
     this.className = 'sprite-position-panel'
     this.scalePanel = scalePanel
     
@@ -23,16 +23,16 @@ class SpritePosition {
     
     this.STEP = 1
     this.STEP_ACCELERATOR = 10
-    
+
     this.init()
   }
-  
+
   init = () => {
     this.#update()
     this.#createInfoPanel()
     this.#addHandlers()
   }
-  
+
   #update = () => {
     if (this.checkedIndexSprite >= this.spritesLength) {
       this.checkedIndexSprite = this.spritesLength
@@ -40,9 +40,9 @@ class SpritePosition {
     if (this.checkedIndexSprite <= 0) {
       this.checkedIndexSprite = 0
     }
-    
+
     this.sprite = Object.entries(this.sprites)[this.checkedIndexSprite][1]
-    this.spriteName = this.sprite.key
+    this.spriteName = this.sprite.frameName
     this.ElementPosition.X = this.sprite.position.x
     this.ElementPosition.Y = this.sprite.position.y
     this.anglePosition = this.sprite.angle
@@ -54,12 +54,12 @@ class SpritePosition {
     this.ElementInfo.Y.innerHTML     = `Y: ${ Math.trunc(this.sprite.position.y) }`
     this.ElementInfo.ANGLE.innerHTML = `Angle: ${ Math.trunc(this.sprite.angle) }`
   }
-  
+
   #checkoutSprite = () => {
     this.#update()
     this.#updateElementInfo()
   }
-  
+
   #createInfoPanel = () => {
     const wrapInfo = document.createElement('div')
     wrapInfo.setAttribute('style', `
@@ -77,22 +77,22 @@ class SpritePosition {
         color: white;
         z-index: 999;
     `)
-    
+  
     this.ElementInfo.NAME  = document.createElement('p')
     this.ElementInfo.X     = document.createElement('p')
     this.ElementInfo.Y     = document.createElement('p')
     this.ElementInfo.ANGLE = document.createElement('p')
-    
+
     wrapInfo.append(this.ElementInfo.NAME)
     wrapInfo.append(this.ElementInfo.X)
     wrapInfo.append(this.ElementInfo.Y)
     wrapInfo.append(this.ElementInfo.ANGLE)
-    
+  
     this.#updateElementInfo()
-    
+  
     document.body.append(wrapInfo)
   }
-  
+
   #addHandlers() {
     document.addEventListener('keydown', (key) => {
       // сменить sprite ctrl + arrows
@@ -106,31 +106,31 @@ class SpritePosition {
         this.#checkoutSprite()
         return
       }
-      
+
       // ↑→↓← - смена позиции
       if (key.code === 'ArrowDown') this.ElementPosition.Y += this.STEP
       if (key.code === 'ArrowUp') this.ElementPosition.Y -= this.STEP
       if (key.code === 'ArrowLeft') this.ElementPosition.X -= this.STEP
       if (key.code === 'ArrowRight') this.ElementPosition.X += this.STEP
-      
+
       // важен порядок → сперва зажимаем shift, потом кнопку
       if (key.code === 'ArrowDown' &&  !key.altKey && key.shiftKey) this.ElementPosition.Y += this.STEP_ACCELERATOR
       if (key.code === 'ArrowUp' &&  !key.altKey && key.shiftKey) this.ElementPosition.Y -= this.STEP_ACCELERATOR
       if (key.code === 'ArrowLeft' &&  !key.altKey && key.shiftKey) this.ElementPosition.X -= this.STEP_ACCELERATOR
       if (key.code === 'ArrowRight' && !key.altKey &&  key.shiftKey) this.ElementPosition.X += this.STEP_ACCELERATOR
-      
+
       // важен порядок → сперва зажимаем alt, потом кнопку
       if (key.code === 'ArrowDown' && key.altKey && !key.shiftKey) this.anglePosition += this.STEP
       if (key.code === 'ArrowUp' && key.altKey && !key.shiftKey) this.anglePosition -= this.STEP
       if (key.code === 'ArrowLeft' && key.altKey && !key.shiftKey) this.anglePosition -= this.STEP
       if (key.code === 'ArrowRight' && key.altKey && !key.shiftKey) this.anglePosition += this.STEP
-      
+  
       this.#updateElementInfo()
-      
+
       this.sprite.position.set(this.ElementPosition.X, this.ElementPosition.Y)
       this.sprite.angle = this.anglePosition
     })
-    
+
     // сменить sprite колёсиком
     document.addEventListener('wheel', (wheel) => {
       if (wheel.deltaY < 0) {
