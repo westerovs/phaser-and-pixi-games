@@ -1,17 +1,13 @@
-const animateText = (oldText, newText, callback, speed = 150) => {
+const animateText = ({oldText, newText, callback, speed = 0.5}) => {
   const splitText = newText.split('')
   let letter = ''
   
   const time = (i) => setTimeout(() => {
     letter += splitText[i]
     oldText.setText(letter)
-    
+
     if (i === splitText.length - 1) {
-      setTimeout(() => {
-        if (callback) {
-          callback()
-        }
-      }, 500)
+      setTimeout(() => callback ? callback() : null, 500)
     }
   }, i * speed)
   
@@ -41,13 +37,11 @@ const createDarkMask = (game, container, fillAlpha = 0.7) => {
   const drawing = game.make.graphics(0, 0)
   drawing.beginFill(0x000000)
   drawing.fillAlpha = fillAlpha
-  drawing.anchor.set(0.5)
-  drawing.drawRect(0, 0, 1366, 1366, 0)
+  drawing.drawRect(0, 0, 1366 * game.factor, 1366 * game.factor)
   drawing.endFill()
-  container.add(drawing)
   
   drawing.alpha = 0
-  setAlpha(game, drawing, 1)
+  return tweenSetAlpha(game, drawing, 1)
 }
 
 createRect = (game, container, x, y, w, h) => {
@@ -163,3 +157,5 @@ game.state.add('basic', {
 })
 
 game.state.start('basic')
+
+
