@@ -120,3 +120,49 @@ const tweenTint = (game, spriteToTween, startColor, endColor, duration = 0) => {
     })
     .start()
 }
+
+
+
+// интересные варианты твинов на попробовать. Работает с массивом!
+
+// *** v1 ***
+this.testTween = this.game.add.tween(this.hint).to({
+  x: [100, 200, 300, 400, 300, 200, 502, 100],
+  y: [100, 230, 300, -100, 100, 200, -302, 100]
+}, 1000, Phaser.Easing.Sinusoidal.InOut, true, 0, true)
+  .interpolation(function (v, k) {
+    console.log(v, k)
+    return Phaser.Math.bezierInterpolation(v, k);
+  });
+
+
+// *** v2 *** простая цепочка
+
+// some coordinates
+const steps = [
+  {x: 100, y: 100},
+  {x: 100, y: 150},
+  {x: 100, y: 200},
+  {x: 150, y: 200},
+  {x: 200, y: 200}
+];
+
+// create
+this.chainedTween = this.game.add.tween(this.hint)
+// attach
+for (let i = 0; i < steps.length; i++) {
+  this.chainedTween.to(
+    {x: steps[i].x, y: steps[i].y},
+    500, "Quad.easeOut");
+}
+this.chainedTween.start();
+
+
+// *** v3 *** цепочка твинов методом
+
+const tweenA = this.game.add.tween(this.hint).to({x: 100, y: 250}, 1000)
+const tweenB = this.game.add.tween(this.hint).to({x: 250, y: 150}, 1000)
+const tweenC = this.game.add.tween(this.hint).to({x: 350, y: 200}, 1000)
+
+tweenA.chain(tweenB, tweenC)
+tweenA.start()
