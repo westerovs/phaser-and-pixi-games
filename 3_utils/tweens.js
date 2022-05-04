@@ -105,7 +105,7 @@ const tweenSetAlphaReplaceSpriteAlpha = (game, sprite1, sprite2, second = 1, sec
 }
 
 
-const tweenSetAlpha = (game, sprite, alpha, second = 1, secondDelay = 0) => {
+const tweenSetAlpha = (game, sprite, alpha, second = 0.5, secondDelay = 0) => {
   return game.add
     .tween(sprite)
     .to({alpha}, Phaser.Timer.SECOND * second, Phaser.Easing.Linear.None, true, secondDelay * 1000)

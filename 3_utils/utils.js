@@ -159,3 +159,37 @@ game.state.add('basic', {
 game.state.start('basic')
 
 
+/*
+    
+    addSparkleToElement(this.game, {
+      spriteKey: 'light',
+      posX: 0,
+      posY: 0,
+    })
+*/
+
+const addSparkleToElement = (game, params) => {
+  const {
+          atlas = 'main',
+          posX = game.input.worldX,
+          posY = game.input.worldY,
+          spriteKey,
+          count = 1,
+          minSpeedX = 0,
+          minSpeedY = 0,
+          maxSpeedX = 0,
+          maxSpeedY = 0,
+          gravitation = 0,
+        } = params
+  
+  const sparkleEmitter = game.add.emitter(game.input.worldX, game.input.worldY, count)
+
+  sparkleEmitter.makeParticles(atlas, `${spriteKey}.png`)
+  sparkleEmitter.minParticleSpeed.setTo(minSpeedX, minSpeedY)
+  sparkleEmitter.maxParticleSpeed.setTo(maxSpeedX, maxSpeedY)
+  sparkleEmitter.setScale(0.5 * game.factor, 5 * game.factor, 0.5 * game.factor, 5 * game.factor, 2500)
+  sparkleEmitter.gravity = gravitation
+  sparkleEmitter.start(true, 500, null, 25)
+
+  game.world.add(sparkleEmitter)
+}
