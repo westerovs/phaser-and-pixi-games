@@ -1,41 +1,45 @@
 /* eslint-disable */
 
 export default class Timer {
-  constructor(game, callBack, timeSecond = 3) {
-    this.game = game
-    this.callBack = callBack
+  constructor(game, callBack, timeSecond) {
+    this.game       = game
+    this.callBack   = callBack
     this.timeSecond = timeSecond
-  
+    
     this.timer = null
-    this.firstInit = false
     this.init()
   }
   
   init = () => {
-     this.game.canvas.addEventListener('pointerdown', this.touchStart)
-  
-    this.reset()
+    this.#reset()
   }
   
-  touchStart = () => {
-    console.log('click')
-    if (this.timer) this.timer.destroy()
-    
-    this.reset()
-    
-    setTimeout(() => {
-      this.destroy()
-    }, 3000)
+  render = () => {
+    this.#touchStart()
   }
   
-  reset = () => {
+  destroy = () => {
+    console.log('***')
+    console.log('timer destroyed')
+    console.log('***')
+    this.timer.destroy()
+  }
+  
+  #touchStart = () => {
+    if (this.game.input.activePointer.isDown) {
+      if (this.timer) this.timer.destroy()
+      this.#reset()
+    }
+  }
+  
+  #reset = () => {
     if (this.timer) {
       this.timer.destroy()
     }
     
     this.timer = this.game.time.create(false)
+  
     this.timer.loop(Phaser.Timer.SECOND * this.timeSecond, () => {
-      
       this.timer.destroy()
       this.callBack()
       console.log('CLEAR TIMER')
@@ -43,10 +47,5 @@ export default class Timer {
     
     this.timer.start()
   }
-  
-  destroy = () => {
-    console.log('timer destroyed')
-    this.game.canvas.removeEventListener('pointerdown', this.touchStart)
-    this.timer.destroy()
-  }
+
 }

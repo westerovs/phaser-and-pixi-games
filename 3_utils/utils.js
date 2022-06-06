@@ -193,3 +193,11 @@ const addSparkleToElement = (game, params) => {
 
   game.world.add(sparkleEmitter)
 }
+
+
+const checkOverlap = (spriteA, spriteB) => {
+  const boundsA = spriteA.getBounds()
+  const boundsB = spriteB.getBounds()
+  
+  return Phaser.Rectangle.intersects(boundsA, boundsB)
+}
