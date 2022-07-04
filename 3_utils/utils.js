@@ -201,3 +201,13 @@ const checkOverlap = (spriteA, spriteB) => {
   
   return Phaser.Rectangle.intersects(boundsA, boundsB)
 }
+
+
+#createTick = (delay = 1) => {
+  this.tick = this.game.time.create(false)
+  this.tick.loop(Phaser.Timer.SECOND * delay, () => {
+    if (this.game.input.activePointer.isDown) return
+    this.test()
+  })
+  this.tick.start()
+}
