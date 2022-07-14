@@ -16,20 +16,11 @@ const createTween = (game, sprite, props) => {
     .yoyo(yoyo)
 }
 
-const animationMove = (game, sprite, x = 0, y = 0, duration = 0.1, delay = 0, repeat = 0, yoyo = false, autostart = true) => {
-  return createTween(game, sprite.position, {
-    params   : {
-      x: sprite.position.x + x,
-      y: sprite.position.y + y,
-    },
-    delay,
-    duration,
-    repeat,
-    yoyo     : yoyo,
-    autostart: autostart
-  })
+const tweenMove = (game, sprite, position = {x: 0, y: 0}, second = 0.5, secondDelay = 0) => {
+  return game.add
+    .tween(sprite)
+    .to(position, Phaser.Timer.SECOND * second, Phaser.Easing.Linear.None, true, secondDelay * 1000)
 }
-
 
 
 const animationAngle = (game, sprite, angle,  duration = 0.1, delay = 0, repeat = 0, yoyo = false) => {
@@ -95,11 +86,12 @@ const tweenSetAlphaPulseAlpha = (game, sprite, duration) => {
     Phaser.Timer.SECOND * duration, Phaser.Easing.Linear.None, false, 100, -1).yoyo(true)
 }
 
-const tweenSetAlphaReplaceSpriteAlpha = (game, sprite1, sprite2, second = 1, secondDelay = 0) => {
-  return game.add
+const tweenSetAlphaReplaceSpriteAlpha = (game, sprite1, sprite2, second = 0.5, secondDelay = 0) => {
+  game.add
     .tween(sprite1)
     .to({alpha: 0}, Phaser.Timer.SECOND * second, Phaser.Easing.Linear.None, true, secondDelay * 1000)
-  game.add
+
+  return game.add
     .tween(sprite2)
     .to({alpha: 1}, Phaser.Timer.SECOND * second, Phaser.Easing.Linear.None, true, secondDelay * 1000)
 }
@@ -121,6 +113,36 @@ const tweenTint = (game, spriteToTween, startColor, endColor, duration = 0) => {
     .start()
 }
 
+
+const tweenShake = (game, sprite, props) => {
+  const {
+    params1,
+    params2,
+    duration = 0.2,
+    secondDelay = 0,
+    yoyo = true,
+    time = Phaser.Timer.SECOND * duration,
+    easing = Phaser.Easing.Linear.None,
+    autostart = true,
+    delay = secondDelay,
+    repeat = 1,
+  } = props
+
+  game.add.tween(sprite)
+    .to(params1, time, easing, autostart, delay)
+    .onComplete.add(() => {
+      game.add.tween(sprite)
+        .to(params2, time, easing, autostart, delay)
+        .yoyo(yoyo)
+        .repeat(repeat)
+    })
+}
+/*
+tweenShake(this.game, lock, {
+  params1: {angle: lock.angle - 1},
+  params2: {angle: lock.angle + 2}
+})
+*/
 
 
 // интересные варианты твинов на попробовать. Работает с массивом!

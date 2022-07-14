@@ -211,3 +211,12 @@ const checkOverlap = (spriteA, spriteB) => {
   })
   this.tick.start()
 }
+
+
+#resizeFontAndPos = (texts, width, height, isLandscape) => {
+  [...texts].forEach(text => {
+    text.fontSize = text.data.offset.fontSize * this.game.factor
+    text.position.set(...setPosition(width, height, this.game.factor, isLandscape, text))
+  })
+
+}
