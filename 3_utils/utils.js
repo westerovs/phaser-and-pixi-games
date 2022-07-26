@@ -220,3 +220,20 @@ const checkOverlap = (spriteA, spriteB) => {
   })
 
 }
+
+// для быстрого ресайза
+#resize = () => {
+  const setPositionGroup = (isLandscape) => {
+    if (isLandscape) {
+
+    } else {
+
+    }
+  }
+
+  setPositionGroup(this.game.scale.isGameLandscape)
+
+  this.game.onResizeSignal.add((isLandscape) => {
+    setPositionGroup(isLandscape)
+  })
+}
