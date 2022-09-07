@@ -46,15 +46,9 @@ const cameraScale = (game, factor, scale = 1, duration = 0.5) => {
 }
 
 
-const createScaleTween = (game, sprite, repeat = -1, speedSec = 0.5) => {
-  return createTween(game, sprite.scale, {
-    params: {
-      x: sprite.scale.x * 0.95,
-      y: sprite.scale.y * 0.95,
-    },
-    repeat: -1,
-    yoyo  : true,
-  })
+const scaleTween = (game, item, scale, duration = 300) => {
+  return game.add.tween(item.scale)
+    .to({x: scale, y: scale}, duration, Phaser.Easing.Linear.None, true)
 }
 
 
@@ -96,6 +90,17 @@ const tweenSetAlphaReplaceSpriteAlpha = (game, sprite1, sprite2, second = 0.5, s
     .to({alpha: 1}, Phaser.Timer.SECOND * second, Phaser.Easing.Linear.None, true, secondDelay * 1000)
 }
 
+
+const tweenScalePulse = (game, sprite, repeat = -1, speedSec = 0.5) => {
+  return createTween(game, sprite.scale, {
+    params: {
+      x: sprite.scale.x * 0.95,
+      y: sprite.scale.y * 0.95,
+    },
+    repeat: -1,
+    yoyo  : true,
+  })
+}
 
 const tweenSetAlpha = (game, sprite, alpha, second = 0.5, secondDelay = 0) => {
   return game.add

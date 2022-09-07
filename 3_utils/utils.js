@@ -16,6 +16,52 @@ const animateText = ({oldText, newText, callback, speed = 0.5}) => {
   }
 }
 
+
+// вызов 
+  // #createText = () => {
+  //   const style = {
+  //     font         : this.game.constants.FF_BASE,
+  //     fontSize     : 40,
+  //     fill         : '#5E1300',
+  //     // stroke         : '#000000',
+  //     // strokeThickness: 4,
+  //     fontWeight   : 800,
+  //     align        : 'center',
+  //     boundsAlignV : 'top',
+  //     wordWrap     : true,
+  //     wordWrapWidth: 500,
+  //   }
+
+  //   const text = this.game.make.text(10, -5, '', style)
+  //   text.anchor.set(0.5)
+
+  //   return text
+  // }
+
+  // this.animateText(text, this.phrase, false)
+
+
+
+// v2 пример см в задаче slk.ST0150v002
+animateText = (initText, newText, callback, speed = 80) => {
+  const splitText = newText.split('')
+  let letter = ''
+
+  splitText.forEach((word, i) => {
+    setTimeout(() => {
+
+      letter += word
+      initText.setText(letter)
+
+      // вызов callback
+      if (i === splitText.length - 1) {
+        setTimeout(() => callback ? callback() : null, 500)
+      }
+      
+    }, speed * i)
+  })
+}
+
 const createMask = (game, container, element) => {
   const sprite = element
   const spriteX = sprite.position.x - sprite.width / 2
@@ -168,31 +214,39 @@ game.state.start('basic')
     })
 */
 
+// particle
 const addSparkleToElement = (game, params) => {
   const {
-          atlas = 'main',
-          posX = game.input.worldX,
-          posY = game.input.worldY,
-          spriteKey,
-          count = 1,
-          minSpeedX = 0,
-          minSpeedY = 0,
-          maxSpeedX = 0,
-          maxSpeedY = 0,
+          tweenItem,
+          frame,
+          count = 50,
+          minSpeedX = -450,
+          minSpeedY = -450,
+          maxSpeedX = 450,
+          maxSpeedY = 450,
           gravitation = 0,
         } = params
   
-  const sparkleEmitter = game.add.emitter(game.input.worldX, game.input.worldY, count)
-
-  sparkleEmitter.makeParticles(atlas, `${spriteKey}.png`)
-  sparkleEmitter.minParticleSpeed.setTo(minSpeedX, minSpeedY)
-  sparkleEmitter.maxParticleSpeed.setTo(maxSpeedX, maxSpeedY)
+  const sparkleEmitter = game.add
+    .emitter(tweenItem.worldPosition.x, tweenItem.worldPosition.y, count)
+  
+  sparkleEmitter.makeParticles('main', `${frame}.png`)
+  sparkleEmitter.minParticleSpeed.setTo(minSpeedX * game.factor, minSpeedY * game.factor)
+  sparkleEmitter.maxParticleSpeed.setTo(maxSpeedX * game.factor, maxSpeedY * game.factor)
   sparkleEmitter.setScale(0.5 * game.factor, 5 * game.factor, 0.5 * game.factor, 5 * game.factor, 2500)
   sparkleEmitter.gravity = gravitation
   sparkleEmitter.start(true, 500, null, 25)
-
-  game.world.add(sparkleEmitter)
+  
+  game.stage.add(sparkleEmitter)
 }
+
+// вызов
+    addSparkleToElement(this.game, {
+      tweenItem: sprite,
+      frame    : 'flash',
+      count    : getRandomNumber(8, 20),
+      gravitation: getRandomNumber(500, 1500),
+    })
 
 
 const checkOverlap = (spriteA, spriteB) => {
