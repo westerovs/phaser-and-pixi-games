@@ -1,20 +1,51 @@
-const animateText = ({oldText, newText, callback, speed = 0.5}) => {
-  const splitText = newText.split('')
-  let letter = ''
+const animateText = (game, textObject, params = {}) => {
+  const {
+          newText  = false,
+          callback = false,
+          speed    = 80,
+          callbackDelay = 500,
+          resolveData = true
+        } = params
   
-  const time = (i) => setTimeout(() => {
-    letter += splitText[i]
-    oldText.setText(letter)
-
-    if (i === splitText.length - 1) {
-      setTimeout(() => callback ? callback() : null, 500)
-    }
-  }, i * speed)
-  
-  for (let i = 0; i < splitText.length; i++) {
-    time(i)
-  }
+  return new Promise(resolve => {
+    const splitText  = newText ? newText.split('') : textObject._text.split('')
+    let letter = ''
+    textObject.alpha = 0
+    
+    splitText.forEach((word, i) => {
+      game.time.events.add(speed * i, () => {
+        letter += word
+        textObject.setText(letter)
+        textObject.alpha = 1
+        
+        // вызов callback
+        if (i === splitText.length - 1) {
+          resolve(resolveData)
+          game.time.events.add(callbackDelay, () => (callback ? callback() : null))
+        }
+      })
+    })
+  })
 }
+
+/* 
+Пример вызова:
+  // short
+  animateText(this.game, this.texts.intro) 
+
+  animateText(this.game, this.texts.intro, {
+  speed: 50,
+  resolveData: 'bla bla bla'
+  })
+  .then((data) => animateText(this.game, this.texts.intro, {
+    newText: 'xyй ' + data
+  }))
+  .then(() => animateText(this.game, this.texts.intro, {
+    newText: 'zxc фыв счя'
+  }))
+*/
+
+
 
 
 // вызов 
@@ -42,25 +73,7 @@ const animateText = ({oldText, newText, callback, speed = 0.5}) => {
 
 
 
-// v2 пример см в задаче slk.ST0150v002
-animateText = (initText, newText, callback, speed = 80) => {
-  const splitText = newText.split('')
-  let letter = ''
 
-  splitText.forEach((word, i) => {
-    setTimeout(() => {
-
-      letter += word
-      initText.setText(letter)
-
-      // вызов callback
-      if (i === splitText.length - 1) {
-        setTimeout(() => callback ? callback() : null, 500)
-      }
-      
-    }, speed * i)
-  })
-}
 
 const createMask = (game, container, element) => {
   const sprite = element
@@ -291,3 +304,17 @@ const checkOverlap = (spriteA, spriteB) => {
     setPositionGroup(isLandscape)
   })
 }
+
+
+// что бы кнопку не плющило
+const setCtaText = (game, x, y, fontSize, text) => {
+  const ctaText = game.make.text(x, y, text, {
+    font    : game.constants.FF_BASE,
+    fill    : '#ffead2',
+    fontSize,
+  })
+  ctaText.anchor.set(0.5, 0.5)
+  ctaText.setShadow(0, 3, '#000000', 2)
+  game.containers.cta.addChild(ctaText)
+}
+setCtaText(this.game, 0, -8, 36, 'KOSTENLOS SPIELEN!')
