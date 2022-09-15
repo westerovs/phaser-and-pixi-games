@@ -3,31 +3,34 @@ const animateText = (game, textObject, params = {}) => {
           newText  = false,
           callback = false,
           speed    = 80,
+          initTextDelay = 0,
           callbackDelay = 500,
-          resolveData = true
+          resolveData = true,
         } = params
   
   return new Promise(resolve => {
-    const splitText  = newText ? newText.split('') : textObject._text.split('')
-    let letter = ''
-    textObject.alpha = 0
-    
-    splitText.forEach((word, i) => {
-      game.time.events.add(speed * i, () => {
-        letter += word
-        textObject.setText(letter)
-        textObject.alpha = 1
-        
-        // вызов callback
-        if (i === splitText.length - 1) {
-          resolve(resolveData)
-          game.time.events.add(callbackDelay, () => (callback ? callback() : null))
-        }
+    game.time.events.add(initTextDelay, () => {
+      
+      const splitText  = newText ? newText.split('') : textObject._text.split('')
+      let letter       = ''
+      textObject.alpha = 0
+      
+      splitText.forEach((word, i) => {
+        game.time.events.add(speed * i, () => {
+          letter += word
+          textObject.setText(letter)
+          textObject.alpha = 1
+          
+          // callback & resolve
+          if (i === splitText.length - 1) {
+            resolve(resolveData)
+            game.time.events.add(callbackDelay, () => (callback ? callback() : null))
+          }
+        })
       })
     })
   })
 }
-
 /* 
 Пример вызова:
   // short
