@@ -2,7 +2,7 @@ class Game {
   constructor() {
     this.game = null;
   
-    // кнопка старт
+    
     this.playing = false; // пригодится сделать ракетку неподвижной
     this.startButton = null;
   

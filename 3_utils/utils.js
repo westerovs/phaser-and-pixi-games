@@ -321,3 +321,8 @@ const setCtaText = (game, x, y, fontSize, text) => {
   game.containers.cta.addChild(ctaText)
 }
 setCtaText(this.game, 0, -8, 36, 'KOSTENLOS SPIELEN!')
+
+
+const setPointerEvents = (game, status) => {
+  game.canvas.style.pointerEvents = status
+}
