@@ -326,3 +326,21 @@ setCtaText(this.game, 0, -8, 36, 'KOSTENLOS SPIELEN!')
 const setPointerEvents = (game, status) => {
   game.canvas.style.pointerEvents = status
 }
+
+// ------------------- TIMER
+  // timer
+  createTimer = () => {
+    if (this.timer) {
+      this.timer.destroy()
+    }
+    
+    this.timer = this.game.time.create(false)
+    this.timer.loop(1000, () => {
+      this.tick()
+    })
+    this.timer.start()
+  }
+  
+  tick = () => {
+    console.log('tick')
+  }

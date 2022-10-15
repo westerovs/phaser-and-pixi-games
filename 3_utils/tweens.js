@@ -102,11 +102,33 @@ const tweenScalePulse = (game, sprite, repeat = -1, speedSec = 0.5) => {
   })
 }
 
+
 const tweenSetAlpha = (game, sprite, alpha, second = 0.5, secondDelay = 0) => {
   return game.add
     .tween(sprite)
     .to({alpha}, Phaser.Timer.SECOND * second, Phaser.Easing.Linear.None, true, secondDelay * 1000)
 }
+
+const blinkingAlpha = (game, sprite, alpha = 0, alpha2 = 1, second = 0.5, secondDelay = 0) => {
+  return new Promise(resolve => {
+    game.add.tween(sprite)
+      .to({alpha}, Phaser.Timer.SECOND * second, Phaser.Easing.Linear.None, true, secondDelay * 1000)
+      .onComplete.add(() => {
+      game.add.tween(sprite)
+        .to({alpha: alpha2}, Phaser.Timer.SECOND * second, Phaser.Easing.Linear.None, true, secondDelay * 1000)
+        .onComplete.add(() => resolve())
+    })
+  })
+}
+
+// вызов:
+
+// runAnimation = (glow1, glow2) => {
+//   blinkingAlpha(this.game, glow1, 1, 0, 1)
+//     .then(() => blinkingAlpha(this.game, glow2, 1, 0, 1))
+//     .then(() => this.runAnimation(glow1, glow2))
+// }
+
 
 const tweenTint = (game, spriteToTween, startColor, endColor, duration = 0) => {
   const colorBlend = {step: 0}
