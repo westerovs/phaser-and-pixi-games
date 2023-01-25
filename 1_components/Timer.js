@@ -1,5 +1,7 @@
 /* eslint-disable */
 
+import {gsap} from 'gsap'
+
 export default class Timer {
   constructor(game, callBack, timeSecond) {
     this.game       = game
@@ -12,40 +14,38 @@ export default class Timer {
   
   init = () => {
     this.#reset()
-  }
   
-  render = () => {
-    this.#touchStart()
+    this.game.app.stage.on('pointerdown', this.#touchStart)
   }
   
   destroy = () => {
-    console.log('***')
     console.log('timer destroyed')
     console.log('***')
-    this.timer.destroy()
-  }
+    this.timer.kill()
+    // this.timer = null
+  
+    this.game.app.stage.off('pointerdown', this.#touchStart)
+    
+    }
   
   #touchStart = () => {
-    if (this.game.input.activePointer.isDown) {
-      if (this.timer) this.timer.destroy()
-      this.#reset()
-    }
+    console.log('click')
+    
+    if (this.timer) this.timer.kill()
+    this.#reset()
   }
   
   #reset = () => {
     if (this.timer) {
-      this.timer.destroy()
+      this.timer.kill()
     }
     
-    this.timer = this.game.time.create(false)
-  
-    this.timer.loop(Phaser.Timer.SECOND * this.timeSecond, () => {
-      this.timer.destroy()
-      this.callBack()
-      console.log('CLEAR TIMER')
-    })
-    
-    this.timer.start()
+    this.timer = gsap.to({}, {duration: this.timeSecond})
+      .eventCallback('onComplete', () => {
+        console.log('tick')
+        this.timer.kill()
+        this.callBack()
+      })
   }
 
 }
