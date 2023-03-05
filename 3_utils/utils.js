@@ -88,7 +88,6 @@ const createMask = (game, container, element) => {
   const mask = game.make.graphics(0, 0)
   mask.beginFill(0x000000)
   mask.fillAlpha = 1
-  mask.anchor.set(0.5)
   mask.drawRect(spriteX, spriteY, spriteW, spriteH)
   container.add(mask)
   
@@ -110,7 +109,6 @@ createRect = (game, container, x, y, w, h) => {
   const rect = game.make.graphics(0, 0);
   rect.beginFill(0x000000);
   rect.fillAlpha = 0.5
-  rect.anchor.set(0.5)
   rect.drawRect(x, y, w, h);
   rect.endFill();
   
