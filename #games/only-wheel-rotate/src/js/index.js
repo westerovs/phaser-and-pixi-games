@@ -27,9 +27,6 @@ class Game {
 
   preload = () => {
     this.game.load.image('circle1', './src/img/circle1.png')
-    this.game.load.image('circle2', './src/img/circle2.png')
-    this.game.load.image('circle3', './src/img/circle3.png')
-    this.game.load.image('circle4', './src/img/circle4.png')
   }
 
   create = () => {
