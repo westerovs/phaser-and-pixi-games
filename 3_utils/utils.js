@@ -7,20 +7,20 @@ const animateText = (game, textObject, params = {}) => {
           callbackDelay = 500,
           resolveData = true,
         } = params
-  
+
   return new Promise(resolve => {
     game.time.events.add(initTextDelay, () => {
-      
+
       const splitText  = newText ? newText.split('') : textObject._text.split('')
       let letter       = ''
       textObject.alpha = 0
-      
+
       splitText.forEach((word, i) => {
         game.time.events.add(speed * i, () => {
           letter += word
           textObject.setText(letter)
           textObject.alpha = 1
-          
+
           // callback & resolve
           if (i === splitText.length - 1) {
             resolve(resolveData)
@@ -31,10 +31,10 @@ const animateText = (game, textObject, params = {}) => {
     })
   })
 }
-/* 
+/*
 Пример вызова:
   // short
-  animateText(this.game, this.texts.intro) 
+  animateText(this.game, this.texts.intro)
 
   animateText(this.game, this.texts.intro, {
   speed: 50,
@@ -51,7 +51,7 @@ const animateText = (game, textObject, params = {}) => {
 
 
 
-// вызов 
+// вызов
   // #createText = () => {
   //   const style = {
   //     font         : this.game.constants.FF_BASE,
@@ -75,22 +75,19 @@ const animateText = (game, textObject, params = {}) => {
   // this.animateText(text, this.phrase, false)
 
 
-
-
-
 const createMask = (game, container, element) => {
   const sprite = element
   const spriteX = sprite.position.x - sprite.width / 2
   const spriteY = sprite.position.y - sprite.height / 2
   const spriteW = sprite.width
   const spriteH = sprite.height
-  
+
   const mask = game.make.graphics(0, 0)
   mask.beginFill(0x000000)
   mask.fillAlpha = 1
   mask.drawRect(spriteX, spriteY, spriteW, spriteH)
   container.add(mask)
-  
+
   return mask
 }
 
@@ -100,18 +97,18 @@ const createDarkMask = (game, container, fillAlpha = 0.7) => {
   drawing.fillAlpha = fillAlpha
   drawing.drawRect(0, 0, 1366 * game.factor, 1366 * game.factor)
   drawing.endFill()
-  
+
   drawing.alpha = 0
   return tweenSetAlpha(game, drawing, 1)
 }
 
-createRect = (game, container, x, y, w, h) => {
+const createRect = (game, container, x, y, w, h) => {
   const rect = game.make.graphics(0, 0);
   rect.beginFill(0x000000);
   rect.fillAlpha = 0.5
   rect.drawRect(x, y, w, h);
   rect.endFill();
-  
+
   container.add(rect)
 }
 
@@ -134,7 +131,7 @@ const createBtn = (game, params) => {
           downFrame,
           upFrame,
         } = params
-  
+
   const button = game.make.button(
     x,
     y,
@@ -147,7 +144,7 @@ const createBtn = (game, params) => {
     upFrame,
   )
   button.anchor.set(0.5)
-  
+
   return button
 }
 
@@ -158,14 +155,14 @@ const createMask = (game, container, element) => {
   const spriteY = sprite.position.y - sprite.height / 2
   const spriteW = sprite.width
   const spriteH = sprite.height
-  
+
   const mask = game.make.graphics(0, 0)
   mask.beginFill(0x000000)
   mask.fillAlpha = 1
   mask.anchor.set(0.5)
   mask.drawRect(spriteX, spriteY, spriteW, spriteH)
   container.gameLayer.add(mask)
-  
+
   return mask
 }
 
@@ -175,7 +172,7 @@ const getRandomNumber = (min = 0, max) => Math.round(Math.random() * (max - min)
 
 const getDprFactor = (factorGame) => {
   let factor = null
-  
+
   if (window.devicePixelRatio === 1) {
     factor = factorGame
   }
@@ -185,7 +182,7 @@ const getDprFactor = (factorGame) => {
   if (window.devicePixelRatio === 3) {
     factor = factorGame / 3
   }
-  
+
   return factor
 }
 
@@ -220,7 +217,7 @@ game.state.start('basic')
 
 
 /*
-    
+
     addSparkleToElement(this.game, {
       spriteKey: 'light',
       posX: 0,
@@ -240,17 +237,17 @@ const addSparkleToElement = (game, params) => {
           maxSpeedY = 450,
           gravitation = 0,
         } = params
-  
+
   const sparkleEmitter = game.add
     .emitter(tweenItem.worldPosition.x, tweenItem.worldPosition.y, count)
-  
+
   sparkleEmitter.makeParticles('main', `${frame}.png`)
   sparkleEmitter.minParticleSpeed.setTo(minSpeedX * game.factor, minSpeedY * game.factor)
   sparkleEmitter.maxParticleSpeed.setTo(maxSpeedX * game.factor, maxSpeedY * game.factor)
   sparkleEmitter.setScale(0.5 * game.factor, 5 * game.factor, 0.5 * game.factor, 5 * game.factor, 2500)
   sparkleEmitter.gravity = gravitation
   sparkleEmitter.start(true, 500, null, 25)
-  
+
   game.stage.add(sparkleEmitter)
 }
 
@@ -266,7 +263,7 @@ const addSparkleToElement = (game, params) => {
 const checkOverlap = (spriteA, spriteB) => {
   const boundsA = spriteA.getBounds()
   const boundsB = spriteB.getBounds()
-  
+
   return Phaser.Rectangle.intersects(boundsA, boundsB)
 }
 
@@ -331,14 +328,24 @@ const setPointerEvents = (game, status) => {
     if (this.timer) {
       this.timer.destroy()
     }
-    
+
     this.timer = this.game.time.create(false)
     this.timer.loop(1000, () => {
       this.tick()
     })
     this.timer.start()
   }
-  
+
   tick = () => {
     console.log('tick')
   }
+
+
+
+
+// clear signals
+const clearSignals = (game, object) => {
+  for (const key of Object.getOwnPropertyNames(object)) {
+    delete game.Signals[key]
+  }
+}

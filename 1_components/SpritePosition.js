@@ -8,7 +8,7 @@ class SpritePosition {
 
     this.className = 'sprite-position-panel'
     this.scalePanel = scalePanel
-    
+
     this.ElementPosition = {
       X: null,
       Y: null,
@@ -20,7 +20,7 @@ class SpritePosition {
       Y: null,
       ANGLE: null,
     }
-    
+
     this.STEP = 1
     this.STEP_ACCELERATOR = 10
 
@@ -47,7 +47,7 @@ class SpritePosition {
     this.ElementPosition.Y = this.sprite.position.y
     this.anglePosition = this.sprite.angle
   }
-  
+
   #updateElementInfo = () => {
     this.ElementInfo.NAME.innerHTML  = `Sprite: ${ this.spriteName }`
     this.ElementInfo.X.innerHTML     = `X: ${ Math.trunc(this.sprite.position.x) }`
@@ -77,7 +77,7 @@ class SpritePosition {
         color: white;
         z-index: 999;
     `)
-  
+
     this.ElementInfo.NAME  = document.createElement('p')
     this.ElementInfo.X     = document.createElement('p')
     this.ElementInfo.Y     = document.createElement('p')
@@ -87,9 +87,9 @@ class SpritePosition {
     wrapInfo.append(this.ElementInfo.X)
     wrapInfo.append(this.ElementInfo.Y)
     wrapInfo.append(this.ElementInfo.ANGLE)
-  
+
     this.#updateElementInfo()
-  
+
     document.body.append(wrapInfo)
   }
 
@@ -124,7 +124,7 @@ class SpritePosition {
       if (key.code === 'ArrowUp' && key.altKey && !key.shiftKey) this.anglePosition -= this.STEP
       if (key.code === 'ArrowLeft' && key.altKey && !key.shiftKey) this.anglePosition -= this.STEP
       if (key.code === 'ArrowRight' && key.altKey && !key.shiftKey) this.anglePosition += this.STEP
-  
+
       this.#updateElementInfo()
 
       this.sprite.position.set(this.ElementPosition.X, this.ElementPosition.Y)
@@ -143,4 +143,3 @@ class SpritePosition {
     });
   }
 }
-new SpritePosition(this.sprites)
